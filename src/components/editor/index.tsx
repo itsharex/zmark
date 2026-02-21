@@ -11,7 +11,7 @@ import { Markdown } from "tiptap-markdown";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
 import { toast } from "sonner";
 import { useSaveShortcut } from "@/hooks/use-save-shortcut.ts";
-
+import TurndownService from "turndown";
 
 const extensions = [TextStyleKit, StarterKit, Markdown];
 
@@ -23,9 +23,20 @@ export default () => {
     content: content || defaultContent,
   });
 
+  const tdInstance = new TurndownService({
+    headingStyle: "atx",
+    codeBlockStyle: "fenced",
+    emDelimiter: "*",
+    strongDelimiter: "**",
+    bulletListMarker: "-",
+  });
+
+
   const handleSave = () => {
     if (curPath && editor) {
-      writeTextFile(curPath, editor.getHTML());
+      const html = editor.getHTML();
+      const markdown = tdInstance.turndown(html);
+      writeTextFile(curPath, markdown);
       toast.success("保存成功",{
         position:"top-center"
       });
