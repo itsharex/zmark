@@ -1,7 +1,9 @@
 import type { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
+import { writeTextFile } from "@tauri-apps/plugin-fs";
 
 import { menuBarStateSelector } from "./menubar-state.ts";
+import { useEditorStore } from "@/stores/editor.ts";
 
 export const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) return null;
@@ -10,13 +12,22 @@ export const MenuBar = ({ editor }: { editor: Editor | null }) => {
     selector: menuBarStateSelector,
   });
 
+  const { curPath } = useEditorStore();
+
   if (!editor) {
     return null;
   }
 
+  const handleSave = () => {
+    if (curPath) {
+      writeTextFile(curPath, editor.getHTML());
+    }
+  };
+
   return (
     <div className="control-group">
       <div className="button-group">
+        <button onClick={handleSave}>Save</button>
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editorState.canBold}
