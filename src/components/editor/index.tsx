@@ -20,7 +20,7 @@ export default () => {
   const editor = useEditor({
     extensions,
     content: content,
-  });
+  }, [content]);
 
   const tdInstance = new TurndownService({
     headingStyle: "atx",
@@ -44,11 +44,7 @@ export default () => {
 
   useSaveShortcut(handleSave);
 
-  useEffect(() => {
-    if (editor) {
-      editor.commands.setContent(content);
-    }
-  }, [content, editor]);
+
 
   const showEditor = curPath;
 

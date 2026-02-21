@@ -6,17 +6,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-} from "./ui/sidebar";
+} from "../ui/sidebar";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { getTreeKey } from "@/utils/file";
-import { useCollapse } from "./collapse-provider";
+import { useCollapse } from "../../provider/collapse-provider";
 import { useEffect, useState } from "react";
-
-export type TreeItem = string | TreeItem[];
+import { TreeItem } from "@/types";
+import { TruncatedTooltip } from "../common/truncated-tooltip";
 
 interface ITreeProps {
   item: TreeItem;
@@ -26,7 +26,7 @@ interface ITreeProps {
 export const Tree = (props: ITreeProps) => {
   const { item, basePath } = props;
   const [isOpen, setIsOpen] = useState(
-    typeof item !== "string" && (item[0] === "components" || item[0] === "ui")
+    typeof item !== "string" && (item[0] === "components" || item[0] === "ui"),
   );
   const { subscribe } = useCollapse();
 
@@ -37,32 +37,46 @@ export const Tree = (props: ITreeProps) => {
     return unsubscribe;
   }, [subscribe]);
 
-  const { curPath, setCurPath, setContent } = useEditorStore();
+  const { curPath, setCurPath, setContent, setPreviewPath, previewPath } =
+    useEditorStore();
   if (typeof item === "string") {
     const handleClick = async () => {
+      const path = await join(basePath, item);
+      setPreviewPath(path);
+    };
+
+    const handleDoubleClick = async () => {
       const path = await join(basePath, item);
       setCurPath(path);
       const content = await readTextFile(path);
       setContent(content);
     };
 
-    const fullPath = `${basePath}${sep}${item}`;
-    const isActive = curPath === fullPath;
+    const isActive = curPath.split(sep()).pop() === item;
+    const isPreview = !isActive && !!previewPath && previewPath.split(sep()).pop() === item;
 
     return (
       <SidebarMenuButton
         isActive={isActive}
-        className="data-[active=true]:bg-purple-100"
+        data-preview={isPreview}
+        // TODO: 选中文件的颜色
+        className="data-[active=true]:bg-purple-300 data-[preview=true]:bg-purple-100"
         onClick={handleClick}
+        onDoubleClick={handleDoubleClick}
       >
         <File />
-        {item}
+        <TruncatedTooltip content={item} />
       </SidebarMenuButton>
     );
   }
 
   const [name, ...items] = item;
   const isEmpty = items.length === 0;
+
+  const handleClick = async () => {
+    const path = await join(basePath, name as string);
+    setPreviewPath(path);
+  };
 
   return (
     <SidebarMenuItem>
@@ -72,10 +86,10 @@ export const Tree = (props: ITreeProps) => {
         className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
       >
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton>
+          <SidebarMenuButton onClick={handleClick}>
             <ChevronRight className="transition-transform" />
             <Folder />
-            {name}
+            <TruncatedTooltip content={name} />
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent>
@@ -85,7 +99,7 @@ export const Tree = (props: ITreeProps) => {
                 <Tree
                   key={getTreeKey(subItem)}
                   item={subItem}
-                  basePath={basePath + "/" + name}
+                  basePath={basePath + "/" + (name as string)}
                 />
               ))}
             </SidebarMenuSub>

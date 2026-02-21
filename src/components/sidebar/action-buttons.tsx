@@ -5,7 +5,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
-import { useCollapse } from "./collapse-provider";
+import { useCollapse } from "../../provider/collapse-provider";
 import {
   Tooltip,
   TooltipContent,

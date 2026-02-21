@@ -1,6 +1,17 @@
-import { TreeItem } from "@/components/tree";
-import { BaseDirectory, documentDir, join } from "@tauri-apps/api/path";
-import { exists, mkdir, readDir, writeFile } from "@tauri-apps/plugin-fs";
+import { TreeItem } from "@/types";
+import {
+  BaseDirectory,
+  dirname,
+  documentDir,
+  join,
+} from "@tauri-apps/api/path";
+import {
+  exists,
+  mkdir,
+  readDir,
+  stat,
+  writeFile,
+} from "@tauri-apps/plugin-fs";
 
 /**
  * 获取数据目录路径
@@ -45,18 +56,49 @@ export function getTreeKey(item: TreeItem) {
   return typeof item === "string" ? item : String(item[0]);
 }
 
-export async function createFile(filePath: string) {
-  const dataDir = await getDataDir();
-  const fullPath = await join(dataDir, filePath);
-  if (!(await exists(fullPath))) {
-    await writeFile(fullPath, new Uint8Array());
+export async function isDir(path: string) {
+  try {
+    const fileStat = await stat(path);
+    return fileStat.isDirectory;
+  } catch (error) {
+    console.error("Error checking if path is directory:", error);
+    return false;
   }
 }
 
-export async function createDirectory(dirPath: string) {
-  const dataDir = await getDataDir();
-  const fullPath = await join(dataDir, dirPath);
-  if (!(await exists(fullPath))) {
-    await mkdir(fullPath);
+export async function createFile(filePath: string, basePath?: string) {
+  const dataDir = basePath || (await getDataDir());
+  let finalPath;
+  if (basePath) {
+    const isDirectory = await isDir(basePath);
+    if (isDirectory) {
+      finalPath = await join(basePath, filePath);
+    } else {
+      finalPath = await join(await dirname(basePath), filePath);
+    }
+  } else {
+    finalPath = await join(dataDir, filePath);
+  }
+
+  if (!(await exists(finalPath))) {
+    await writeFile(finalPath, new Uint8Array());
+  }
+}
+
+export async function createDirectory(dirPath: string, basePath?: string) {
+  const dataDir = basePath || (await getDataDir());
+  let finalPath;
+  if (basePath) {
+    const isDirectory = await isDir(basePath);
+    if (isDirectory) {
+      finalPath = await join(basePath, dirPath);
+    } else {
+      finalPath = await join(await dirname(basePath), dirPath);
+    }
+  } else {
+    finalPath = await join(dataDir, dirPath);
+  }
+  if (!(await exists(finalPath))) {
+    await mkdir(finalPath);
   }
 }

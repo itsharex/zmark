@@ -28,6 +28,7 @@ export function InputDialog({
 }: InputDialogProps) {
   const [inputValue, setInputValue] = useState(initialValue);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isComposing = useRef(false);
 
   useEffect(() => {
     if (open) {
@@ -57,11 +58,20 @@ export function InputDialog({
             value={inputValue}
             placeholder={placeholder}
             onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleConfirm()}
+            onCompositionStart={() => (isComposing.current = true)}
+            onCompositionEnd={() => {
+              setTimeout(() => (isComposing.current = false), 100);
+            }}
+            onKeyDown={(e) => {
+              if (isComposing.current) return;
+              if (e.key === "Enter") {
+                handleConfirm();
+              }
+            }}
           />
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="destructive" onClick={onClose}>
             取消
           </Button>
           <Button variant="secondary" onClick={handleConfirm}>

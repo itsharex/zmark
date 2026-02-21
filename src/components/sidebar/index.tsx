@@ -1,3 +1,4 @@
+import { useEditorStore } from "@/stores/editor";
 import { GalleryVerticalEndIcon } from "lucide-react";
 import type * as React from "react";
 import {
@@ -17,10 +18,11 @@ import {
   getTreeKey,
 } from "@/utils/file";
 import { useEffect, useState } from "react";
-import { Tree, TreeItem } from "./tree";
+import { Tree } from "./tree";
 import { InputDialog } from "./input-dialog";
-import { CollapseProvider } from "./collapse-provider";
+import { CollapseProvider } from "@/provider/collapse-provider";
 import { ActionButtons } from "./action-buttons";
+import { TreeItem } from "@/types";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [fileTree, setFileTree] = useState<TreeItem[]>([]);
@@ -30,6 +32,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     title: string;
     onConfirm: (value: string) => void;
   } | null>(null);
+
+  const { setPreviewPath, previewPath } = useEditorStore();
 
   const refreshFileTree = async () => {
     const files = await getFileTree();
@@ -55,7 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           const finalFileName = fileName.endsWith(".md")
             ? fileName
             : `${fileName}.md`;
-          await createFile(finalFileName);
+          await createFile(finalFileName, previewPath);
           await refreshFileTree();
         }
       },
@@ -68,12 +72,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "创建新文件夹",
       onConfirm: async (dirName) => {
         if (dirName) {
-          await createDirectory(dirName);
+          await createDirectory(dirName, previewPath);
           await refreshFileTree();
         }
       },
     });
     setDialogOpen(true);
+  };
+
+  const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      const dataDir = await getDataDir();
+      setPreviewPath(dataDir);
+    }
   };
 
   return (
@@ -99,9 +110,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="flex flex-col">
         <CollapseProvider>
-          <SidebarGroup className="space-y-1">
+          <SidebarGroup className="space-y-1 flex-1" onClick={handleClick}>
             <div className="flex items-center justify-between px-3">
               <span className="font-medium text-sm">文件</span>
               <ActionButtons
