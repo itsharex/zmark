@@ -4,6 +4,7 @@ import { writeTextFile } from "@tauri-apps/plugin-fs";
 
 import { menuBarStateSelector } from "./menubar-state.ts";
 import { useEditorStore } from "@/stores/editor.ts";
+import { toast } from "sonner";
 
 export const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) return null;
@@ -21,6 +22,10 @@ export const MenuBar = ({ editor }: { editor: Editor | null }) => {
   const handleSave = () => {
     if (curPath) {
       writeTextFile(curPath, editor.getHTML());
+      toast.success("保存成功",{
+        position:"top-center"
+      });
+      console.log("保存成功")
     }
   };
 
