@@ -2,10 +2,10 @@
 import { create } from "zustand";
 
 interface IEditorStore {
-    content: string;
-    setContent: (content: string) => void;
-    curPath: string;
-    setCurPath: (curPath: string) => void;
+  content: string;
+  setContent: (content: string) => void;
+  curPath: string;
+  setCurPath: (curPath: string) => void;
 }
 
 export const useEditorStore = create<IEditorStore>((set) => ({

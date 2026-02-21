@@ -1,13 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
+import { useKeyDisplay } from "./use-key-display";
 
 export const useSaveShortcut = (onSave: () => void) => {
+  const keyDisplay = useKeyDisplay();
   useEffect(() => {
-    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-
     const handleKeyDown = (event: KeyboardEvent) => {
-      const isSaveShortcut = isMac
-        ? event.metaKey && event.key === 's'
-        : event.ctrlKey && event.key === 's';
+      const isSaveShortcut =
+        keyDisplay.Mod === "Ctrl"
+          ? event.ctrlKey && event.key === "s"
+          : event.metaKey && event.key === "s";
 
       if (isSaveShortcut) {
         event.preventDefault();
@@ -15,10 +16,10 @@ export const useSaveShortcut = (onSave: () => void) => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onSave]);
+  }, [onSave, keyDisplay]);
 };

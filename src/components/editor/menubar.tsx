@@ -29,8 +29,8 @@ import {
   Undo,
   WrapText,
 } from "lucide-react";
-import { menuBarStateSelector } from "./menubar-state.ts";
-import { useEffect, useState } from "react";
+import { menuBarStateSelector } from "./menubar-state";
+import { useKeyDisplay } from "@/hooks/use-key-display";
 
 type MenuBarProps = {
   editor: Editor | null;
@@ -38,11 +38,7 @@ type MenuBarProps = {
 };
 
 export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
-  const [isMac, setIsMac] = useState(false);
-
-  useEffect(() => {
-    setIsMac(navigator.platform.toUpperCase().indexOf("MAC") >= 0);
-  }, []);
+  const keyDisplay = useKeyDisplay();
 
   if (!editor) return null;
   const editorState = useEditorState({
@@ -50,8 +46,8 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
     selector: menuBarStateSelector,
   });
 
-  const modKey = isMac ? "⌘" : "Ctrl";
-  const altKey = isMac ? "⌥" : "Alt";
+  const modKey = keyDisplay.Mod === "Ctrl" ? "Ctrl" : "⌘";
+  const altKey = keyDisplay.Mod === "Ctrl" ? "Alt" : "⌥";
 
   return (
     <div className="w-full sticky top-2 z-10 flex justify-center">
@@ -360,7 +356,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>重做 ({isMac ? `${modKey}+Shift+Z` : `${modKey}+Y`})</p>
+                <p>重做 ({keyDisplay.Mod === "Ctrl" ? `${modKey}+Y` : `${modKey}+Shift+Z`})</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

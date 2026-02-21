@@ -1,6 +1,4 @@
-import {
-  GalleryVerticalEndIcon,
-} from "lucide-react";
+import { GalleryVerticalEndIcon } from "lucide-react";
 import type * as React from "react";
 import {
   Sidebar,
@@ -30,7 +28,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogConfig, setDialogConfig] = useState<{
     title: string;
-    label: string;
     onConfirm: (value: string) => void;
   } | null>(null);
 
@@ -38,6 +35,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const files = await getFileTree();
     setFileTree(files);
   };
+
   useEffect(() => {
     const fetchMdFiles = async () => {
       const files = await getFileTree();
@@ -52,7 +50,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const handleCreateFile = () => {
     setDialogConfig({
       title: "创建新文件",
-      label: "文件名",
       onConfirm: async (fileName) => {
         if (fileName) {
           const finalFileName = fileName.endsWith(".md")
@@ -69,7 +66,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const handleCreateDirectory = () => {
     setDialogConfig({
       title: "创建新文件夹",
-      label: "文件夹名",
       onConfirm: async (dirName) => {
         if (dirName) {
           await createDirectory(dirName);
@@ -79,6 +75,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     });
     setDialogOpen(true);
   };
+
   return (
     <Sidebar
       variant="floating"
@@ -127,7 +124,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           onClose={() => setDialogOpen(false)}
           onConfirm={dialogConfig.onConfirm}
           title={dialogConfig.title}
-          label={dialogConfig.label}
         />
       )}
     </Sidebar>

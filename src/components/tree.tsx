@@ -41,14 +41,17 @@ export const Tree = (props: ITreeProps) => {
   if (typeof item === "string") {
     const handleClick = async () => {
       const path = await join(basePath, item);
-      console.log(path, curPath, item);
       setCurPath(path);
       const content = await readTextFile(path);
       setContent(content);
     };
+
+    const fullPath = `${basePath}${sep}${item}`;
+    const isActive = curPath === fullPath;
+
     return (
       <SidebarMenuButton
-        isActive={item===curPath.split(sep()).pop()}
+        isActive={isActive}
         className="data-[active=true]:bg-purple-100"
         onClick={handleClick}
       >

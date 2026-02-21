@@ -7,14 +7,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface InputDialogProps {
   open: boolean;
   onClose: () => void;
   onConfirm: (value: string) => void;
   title: string;
-  label: string;
+  initialValue?: string;
+  placeholder?: string;
 }
 
 export function InputDialog({
@@ -22,9 +23,20 @@ export function InputDialog({
   onClose,
   onConfirm,
   title,
-  label,
+  initialValue = "",
+  placeholder = "请输入",
 }: InputDialogProps) {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(initialValue);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      setInputValue(initialValue);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [open, initialValue]);
 
   const handleConfirm = () => {
     onConfirm(inputValue);
@@ -38,25 +50,23 @@ export function InputDialog({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="name" className="text-right">
-              {label}
-            </label>
-            <Input
-              id="name"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="col-span-3"
-              onKeyDown={(e) => e.key === "Enter" && handleConfirm()}
-            />
-          </div>
+        <div className="flex flex-col gap-2 py-4">
+          <Input
+            ref={inputRef}
+            id="name"
+            value={inputValue}
+            placeholder={placeholder}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleConfirm()}
+          />
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
+          <Button variant="ghost" onClick={onClose}>
+            取消
           </Button>
-          <Button onClick={handleConfirm}>Confirm</Button>
+          <Button variant="secondary" onClick={handleConfirm}>
+            确认
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
