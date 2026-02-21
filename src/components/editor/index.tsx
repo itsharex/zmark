@@ -20,7 +20,7 @@ export default () => {
   const { curPath } = useEditorStore();
   const editor = useEditor({
     extensions,
-    content: content || defaultContent,
+    content: content,
   });
 
   const tdInstance = new TurndownService({
@@ -48,7 +48,7 @@ export default () => {
 
   useEffect(() => {
     if (editor) {
-      editor.commands.setContent(content || defaultContent);
+      editor.commands.setContent(content);
     }
   }, [content, editor]);
 
