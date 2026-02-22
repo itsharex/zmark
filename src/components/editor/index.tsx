@@ -1,26 +1,28 @@
 import "./index.scss";
 
+import { writeTextFile } from "@tauri-apps/plugin-fs";
 import { TextStyleKit } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { MenuBar } from "./menubar.tsx";
-import { useEffect } from "react";
-import { useEditorStore } from "@/stores/editor.ts";
-import { Markdown } from "tiptap-markdown";
-import { writeTextFile } from "@tauri-apps/plugin-fs";
 import { toast } from "sonner";
-import { useSaveShortcut } from "@/hooks/use-save-shortcut.ts";
+import { Markdown } from "tiptap-markdown";
 import TurndownService from "turndown";
+import { useSaveShortcut } from "@/hooks/use-save-shortcut.ts";
+import { useEditorStore } from "@/stores/editor.ts";
 import { EmptyEditor } from "./empty-editor.tsx";
+import { MenuBar } from "./menubar.tsx";
 
 const extensions = [TextStyleKit, StarterKit, Markdown];
 
 export default () => {
   const { content, curPath } = useEditorStore();
-  const editor = useEditor({
-    extensions,
-    content: content,
-  }, [content]);
+  const editor = useEditor(
+    {
+      extensions,
+      content: content,
+    },
+    [content],
+  );
 
   const tdInstance = new TurndownService({
     headingStyle: "atx",
@@ -44,13 +46,11 @@ export default () => {
 
   useSaveShortcut(handleSave);
 
-
-
   const showEditor = curPath;
 
   return (
     <div className="flex flex-col h-full">
-      {showEditor ? (
+      {editor && showEditor ? (
         <>
           <MenuBar editor={editor} onSave={handleSave} />
           <EditorContent editor={editor} className="flex-1 overflow-y-auto" />

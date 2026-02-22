@@ -1,6 +1,6 @@
-import { useEditorStore } from "@/stores/editor";
 import { GalleryVerticalEndIcon } from "lucide-react";
 import type * as React from "react";
+import { useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -10,6 +10,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { CollapseProvider } from "@/provider/collapse-provider";
+import { useEditorStore } from "@/stores/editor";
+import type { TreeItem } from "@/types";
 import {
   createDirectory,
   createFile,
@@ -17,12 +20,9 @@ import {
   getFileTree,
   getTreeKey,
 } from "@/utils/file";
-import { useEffect, useState } from "react";
-import { Tree } from "./tree";
-import { InputDialog } from "./input-dialog";
-import { CollapseProvider } from "@/provider/collapse-provider";
 import { ActionButtons } from "./action-buttons";
-import { TreeItem } from "@/types";
+import { InputDialog } from "./input-dialog";
+import { Tree } from "./tree";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [fileTree, setFileTree] = useState<TreeItem[]>([]);

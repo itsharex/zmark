@@ -6,9 +6,9 @@ const Shortcut = ({ keys }: { keys: string[] }) => {
 
   return (
     <div className="flex items-center gap-1.5">
-      {keys.map((key, index) => (
+      {keys.map((key) => (
         <kbd
-          key={index}
+          key={key}
           className="px-2 py-1.5 text-xs font-sans rounded-md border border-b-2 bg-muted text-muted-foreground"
         >
           {keyDisplay[key] || key}
@@ -22,7 +22,10 @@ export const EmptyEditor = () => {
   return (
     <div className="flex h-full items-center justify-center">
       <div className="flex flex-col items-center text-center">
-        <GalleryVerticalEndIcon size={64} className="text-muted-foreground/50" />
+        <GalleryVerticalEndIcon
+          size={64}
+          className="text-muted-foreground/50"
+        />
         <h2 className="mt-6 text-2xl font-bold">欢迎使用 ZMark</h2>
         <p className="mt-2 text-muted-foreground">
           从左侧文件树选择一个文件开始编辑

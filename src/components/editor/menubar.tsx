@@ -1,9 +1,3 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import type { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import {
@@ -29,18 +23,23 @@ import {
   Undo,
   WrapText,
 } from "lucide-react";
-import { menuBarStateSelector } from "./menubar-state";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useKeyDisplay } from "@/hooks/use-key-display";
+import { menuBarStateSelector } from "./menubar-state";
 
 type MenuBarProps = {
-  editor: Editor | null;
+  editor: Editor;
   onSave: () => void;
 };
 
 export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
   const keyDisplay = useKeyDisplay();
 
-  if (!editor) return null;
   const editorState = useEditorState({
     editor,
     selector: menuBarStateSelector,
@@ -56,7 +55,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button onClick={onSave}>
+                <button type="button" onClick={onSave}>
                   <Save size={16} />
                 </button>
               </TooltipTrigger>
@@ -67,6 +66,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().toggleBold().run()}
                   disabled={!editorState.canBold}
                   className={editorState.isBold ? "is-active" : ""}
@@ -81,6 +81,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().toggleItalic().run()}
                   disabled={!editorState.canItalic}
                   className={editorState.isItalic ? "is-active" : ""}
@@ -95,6 +96,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().toggleStrike().run()}
                   disabled={!editorState.canStrike}
                   className={editorState.isStrike ? "is-active" : ""}
@@ -109,6 +111,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().toggleCode().run()}
                   disabled={!editorState.canCode}
                   className={editorState.isCode ? "is-active" : ""}
@@ -123,6 +126,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().unsetAllMarks().run()}
                 >
                   <ListX size={16} />
@@ -135,6 +139,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().clearNodes().run()}
                 >
                   <WrapText size={16} />
@@ -147,6 +152,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().setParagraph().run()}
                   className={editorState.isParagraph ? "is-active" : ""}
                 >
@@ -154,12 +160,15 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>段落 ({modKey}+{altKey}+0)</p>
+                <p>
+                  段落 ({modKey}+{altKey}+0)
+                </p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().toggleHeading({ level: 1 }).run()
                   }
@@ -169,12 +178,15 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>标题 1 ({modKey}+{altKey}+1)</p>
+                <p>
+                  标题 1 ({modKey}+{altKey}+1)
+                </p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().toggleHeading({ level: 2 }).run()
                   }
@@ -184,12 +196,15 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>标题 2 ({modKey}+{altKey}+2)</p>
+                <p>
+                  标题 2 ({modKey}+{altKey}+2)
+                </p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().toggleHeading({ level: 3 }).run()
                   }
@@ -199,12 +214,15 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>标题 3 ({modKey}+{altKey}+3)</p>
+                <p>
+                  标题 3 ({modKey}+{altKey}+3)
+                </p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().toggleHeading({ level: 4 }).run()
                   }
@@ -214,12 +232,15 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>标题 4 ({modKey}+{altKey}+4)</p>
+                <p>
+                  标题 4 ({modKey}+{altKey}+4)
+                </p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().toggleHeading({ level: 5 }).run()
                   }
@@ -229,12 +250,15 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>标题 5 ({modKey}+{altKey}+5)</p>
+                <p>
+                  标题 5 ({modKey}+{altKey}+5)
+                </p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().toggleHeading({ level: 6 }).run()
                   }
@@ -244,12 +268,15 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>标题 6 ({modKey}+{altKey}+6)</p>
+                <p>
+                  标题 6 ({modKey}+{altKey}+6)
+                </p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().toggleBulletList().run()
                   }
@@ -265,6 +292,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().toggleOrderedList().run()
                   }
@@ -280,21 +308,23 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  onClick={() =>
-                    editor.chain().focus().toggleCodeBlock().run()
-                  }
+                  type="button"
+                  onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                   className={editorState.isCodeBlock ? "is-active" : ""}
                 >
                   <CodeSquare size={16} />
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>代码块 ({modKey}+{altKey}+C)</p>
+                <p>
+                  代码块 ({modKey}+{altKey}+C)
+                </p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().toggleBlockquote().run()
                   }
@@ -310,6 +340,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() =>
                     editor.chain().focus().setHorizontalRule().run()
                   }
@@ -324,6 +355,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().setHardBreak().run()}
                 >
                   <WrapText size={16} />
@@ -336,6 +368,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().undo().run()}
                   disabled={!editorState.canUndo}
                 >
@@ -349,6 +382,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => editor.chain().focus().redo().run()}
                   disabled={!editorState.canRedo}
                 >
@@ -356,7 +390,13 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>重做 ({keyDisplay.Mod === "Ctrl" ? `${modKey}+Y` : `${modKey}+Shift+Z`})</p>
+                <p>
+                  重做 (
+                  {keyDisplay.Mod === "Ctrl"
+                    ? `${modKey}+Y`
+                    : `${modKey}+Shift+Z`}
+                  )
+                </p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

@@ -1,22 +1,22 @@
-import { ChevronRight, Folder, File } from "lucide-react";
-import { useEditorStore } from "@/stores/editor";
-import { readTextFile } from "@tauri-apps/plugin-fs";
 import { join, sep } from "@tauri-apps/api/path";
-import {
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-} from "../ui/sidebar";
+import { readTextFile } from "@tauri-apps/plugin-fs";
+import { ChevronRight, File, Folder } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useEditorStore } from "@/stores/editor";
+import type { TreeItem } from "@/types";
 import { getTreeKey } from "@/utils/file";
 import { useCollapse } from "../../provider/collapse-provider";
-import { useEffect, useState } from "react";
-import { TreeItem } from "@/types";
 import { TruncatedTooltip } from "../common/truncated-tooltip";
+import {
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+} from "../ui/sidebar";
 
 interface ITreeProps {
   item: TreeItem;
@@ -53,14 +53,15 @@ export const Tree = (props: ITreeProps) => {
     };
 
     const isActive = curPath.split(sep()).pop() === item;
-    const isPreview = !isActive && !!previewPath && previewPath.split(sep()).pop() === item;
+    const isPreview =
+      !isActive && !!previewPath && previewPath.split(sep()).pop() === item;
 
     return (
       <SidebarMenuButton
         isActive={isActive}
         data-preview={isPreview}
         // TODO: 选中文件的颜色
-        className="data-[active=true]:bg-purple-300 data-[preview=true]:bg-purple-100"
+        className="data-[active=true]:bg-(--purple) data-[active=true]:text-(--white)! data-[active=true]:hover:bg-(--purple-contrast)! data-[preview=true]:bg-purple-100"
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
       >
@@ -78,6 +79,8 @@ export const Tree = (props: ITreeProps) => {
     setPreviewPath(path);
   };
 
+  const isPreview = !!previewPath && previewPath.split(sep()).pop() === name;
+
   return (
     <SidebarMenuItem>
       <Collapsible
@@ -86,7 +89,11 @@ export const Tree = (props: ITreeProps) => {
         className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
       >
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton onClick={handleClick}>
+          <SidebarMenuButton
+            data-preview={isPreview}
+            className="data-[preview=true]:bg-purple-100"
+            onClick={handleClick}
+          >
             <ChevronRight className="transition-transform" />
             <Folder />
             <TruncatedTooltip content={name} />
@@ -99,7 +106,7 @@ export const Tree = (props: ITreeProps) => {
                 <Tree
                   key={getTreeKey(subItem)}
                   item={subItem}
-                  basePath={basePath + "/" + (name as string)}
+                  basePath={`${basePath}/${name as string}`}
                 />
               ))}
             </SidebarMenuSub>

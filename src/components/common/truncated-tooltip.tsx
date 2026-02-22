@@ -1,10 +1,10 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TreeItem } from "@/types";
-import { useLayoutEffect, useRef, useState } from "react";
+import type { TreeItem } from "@/types";
 
 export const TruncatedTooltip = ({ content }: { content: TreeItem }) => {
   const ref = useRef<HTMLSpanElement>(null);
@@ -18,7 +18,7 @@ export const TruncatedTooltip = ({ content }: { content: TreeItem }) => {
     if (element) {
       setIsTruncated(element.scrollWidth > element.clientWidth);
     }
-  }, [content]);
+  }, []);
 
   const span = (
     <span ref={ref} className="truncate">

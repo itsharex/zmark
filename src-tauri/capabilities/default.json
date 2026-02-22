@@ -9,16 +9,16 @@
     "fs:default",
     "fs:allow-document-read-recursive",
     {
-      "identifier":"fs:allow-read-text-file",
+      "identifier": "fs:allow-read-text-file",
       "scope": ["*"]
     },
     {
-      "identifier":"fs:allow-write-text-file",
-      "scope":["*"]
+      "identifier": "fs:allow-write-text-file",
+      "scope": ["*"]
     },
     {
-      "identifier":"fs:allow-write-file",
-      "scope":["*"]
+      "identifier": "fs:allow-write-file",
+      "scope": ["*"]
     }
   ]
 }

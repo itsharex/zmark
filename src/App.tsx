@@ -1,7 +1,7 @@
-import { AppSidebar } from "./components/sidebar";
-import Editor from "./components/editor";
-import { SidebarProvider } from "./components/ui/sidebar";
 import { Toaster } from "sonner";
+import Editor from "./components/editor";
+import { AppSidebar } from "./components/sidebar";
+import { SidebarProvider } from "./components/ui/sidebar";
 import { TooltipProvider } from "./components/ui/tooltip";
 
 import { useEditorStore } from "./stores/editor";

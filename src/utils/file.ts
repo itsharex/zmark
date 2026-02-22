@@ -1,17 +1,11 @@
-import { TreeItem } from "@/types";
 import {
   BaseDirectory,
   dirname,
   documentDir,
   join,
 } from "@tauri-apps/api/path";
-import {
-  exists,
-  mkdir,
-  readDir,
-  stat,
-  writeFile,
-} from "@tauri-apps/plugin-fs";
+import { exists, mkdir, readDir, stat, writeFile } from "@tauri-apps/plugin-fs";
+import type { TreeItem } from "@/types";
 
 /**
  * 获取数据目录路径
@@ -68,7 +62,7 @@ export async function isDir(path: string) {
 
 export async function createFile(filePath: string, basePath?: string) {
   const dataDir = basePath || (await getDataDir());
-  let finalPath;
+  let finalPath: string;
   if (basePath) {
     const isDirectory = await isDir(basePath);
     if (isDirectory) {
@@ -87,7 +81,7 @@ export async function createFile(filePath: string, basePath?: string) {
 
 export async function createDirectory(dirPath: string, basePath?: string) {
   const dataDir = basePath || (await getDataDir());
-  let finalPath;
+  let finalPath: string;
   if (basePath) {
     const isDirectory = await isDir(basePath);
     if (isDirectory) {

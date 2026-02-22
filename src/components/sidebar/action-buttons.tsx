@@ -1,17 +1,12 @@
-import {
-  FilePlus,
-  FoldVertical,
-  FolderPlus,
-  RefreshCw,
-} from "lucide-react";
+import { FilePlus, FolderPlus, FoldVertical, RefreshCw } from "lucide-react";
+import type React from "react";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
-import { useCollapse } from "../../provider/collapse-provider";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import React from "react";
+import { useCollapse } from "../../provider/collapse-provider";
 
 interface ActionButtonProps {
   onClick: () => void;
@@ -49,21 +44,25 @@ export const ActionButtons = ({
 
   const buttons = [
     {
+      key: "create-file",
       onClick: handleCreateFile,
       tooltip: "新建文件",
       icon: <FilePlus className="size-4" />,
     },
     {
+      key: "create-directory",
       onClick: handleCreateDirectory,
       tooltip: "新建文件夹",
       icon: <FolderPlus className="size-4" />,
     },
     {
+      key: "refresh-file-tree",
       onClick: refreshFileTree,
       tooltip: "刷新",
       icon: <RefreshCw className="size-4" />,
     },
     {
+      key: "collapse-all",
       onClick: collapseAll,
       tooltip: "全部折叠",
       icon: <FoldVertical className="size-4" />,
@@ -72,8 +71,12 @@ export const ActionButtons = ({
 
   return (
     <div className="flex items-center gap-1">
-      {buttons.map((button, index) => (
-        <ActionButton key={index} onClick={button.onClick} tooltip={button.tooltip}>
+      {buttons.map((button) => (
+        <ActionButton
+          key={button.key}
+          onClick={button.onClick}
+          tooltip={button.tooltip}
+        >
           {button.icon}
         </ActionButton>
       ))}

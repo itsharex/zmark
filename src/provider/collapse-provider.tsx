@@ -1,5 +1,5 @@
+import { useCallback, useState } from "react";
 import { CollapseContext, useCollapse } from "@/contexts/collapse-context";
-import { useState, useCallback } from "react";
 
 export function CollapseProvider({ children }: { children: React.ReactNode }) {
   const [listeners, setListeners] = useState<(() => void)[]>([]);
@@ -12,7 +12,9 @@ export function CollapseProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const collapseAll = useCallback(() => {
-    listeners.forEach((callback) => callback());
+    listeners.forEach((callback) => {
+      callback();
+    });
   }, [listeners]);
 
   return (
