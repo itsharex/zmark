@@ -1,3 +1,14 @@
+export const DEFAULT_HIGHLIGHT_COLOR = "#ffff00";
+export const HIGHLIGHT_COLORS = [
+  { name: "yellow", color: DEFAULT_HIGHLIGHT_COLOR },
+  { name: "green", color: "#dcfce7" },
+  { name: "blue", color: "#e0f2fe" },
+  { name: "purple", color: "#f3e8ff" },
+  { name: "red", color: "#ffe4e6" },
+] as const;
+
+export type HighlightColor = (typeof HIGHLIGHT_COLORS)[number]["name"];
+
 export const defaultContent = `
 <h2>
   Hi there,

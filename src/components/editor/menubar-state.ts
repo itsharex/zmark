@@ -16,6 +16,9 @@ export function menuBarStateSelector(ctx: EditorStateSnapshot<Editor>) {
     canStrike: ctx.editor.can().chain().toggleStrike().run() ?? false,
     isCode: ctx.editor.isActive("code") ?? false,
     canCode: ctx.editor.can().chain().toggleCode().run() ?? false,
+    isHighlight: ctx.editor.isActive("highlight") ?? false,
+    canHighlight: ctx.editor.can().chain().toggleHighlight().run() ?? false,
+    currentHighlightColor: ctx.editor.getAttributes("highlight").color ?? null,
     canClearMarks: ctx.editor.can().chain().unsetAllMarks().run() ?? false,
 
     // Block types

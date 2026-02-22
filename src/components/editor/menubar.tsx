@@ -10,6 +10,7 @@ import {
   Heading4,
   Heading5,
   Heading6,
+  Highlighter,
   Italic,
   List,
   ListOrdered,
@@ -23,6 +24,12 @@ import {
   Undo,
   WrapText,
 } from "lucide-react";
+import { useState } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Tooltip,
   TooltipContent,
@@ -30,6 +37,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useKeyDisplay } from "@/hooks/use-key-display";
+import { HighlightColorPicker } from "./highlight-picker";
 import { menuBarStateSelector } from "./menubar-state";
 
 type MenuBarProps = {
@@ -39,6 +47,7 @@ type MenuBarProps = {
 
 export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
   const keyDisplay = useKeyDisplay();
+  const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(false);
 
   const editorState = useEditorState({
     editor,
@@ -123,6 +132,34 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
                 <p>代码 ({modKey}+E)</p>
               </TooltipContent>
             </Tooltip>
+            <Popover
+              open={highlightPopoverOpen}
+              onOpenChange={setHighlightPopoverOpen}
+            >
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      disabled={!editorState.canHighlight}
+                      className={editorState.isHighlight ? "is-active" : ""}
+                    >
+                      <Highlighter size={16} />
+                    </button>
+                  </PopoverTrigger>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>高亮（{modKey}+Shift+H）</p>
+                </TooltipContent>
+              </Tooltip>
+              <PopoverContent className="w-auto p-2">
+                <HighlightColorPicker
+                  editor={editor}
+                  currentColor={editorState.currentHighlightColor}
+                  onClose={() => setHighlightPopoverOpen(false)}
+                />
+              </PopoverContent>
+            </Popover>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
