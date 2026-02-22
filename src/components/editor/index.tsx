@@ -1,10 +1,12 @@
 import "./index.scss";
 
 import { writeTextFile } from "@tauri-apps/plugin-fs";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Highlight from "@tiptap/extension-highlight";
 import { TextStyleKit } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { common, createLowlight } from "lowlight";
 import { toast } from "sonner";
 import { Markdown } from "tiptap-markdown";
 import { useSaveShortcut } from "@/hooks/use-save-shortcut.ts";
@@ -13,12 +15,17 @@ import type { EditorStorage } from "@/types.ts";
 import { EmptyEditor } from "./empty-editor.tsx";
 import { MenuBar } from "./menubar.tsx";
 
+const lowlight = createLowlight(common);
+
 const extensions = [
   TextStyleKit,
   StarterKit,
   Markdown.configure({ html: true }),
   Highlight.configure({
     multicolor: true,
+  }),
+  CodeBlockLowlight.configure({
+    lowlight,
   }),
 ];
 

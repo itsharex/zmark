@@ -1,4 +1,7 @@
-@charset "UTF-8";:root {
+@charset "UTF-8";
+@use './lowlight.scss';
+
+:root {
     --white: #fff;
     --black: #2e2b29;
     --black-contrast: #110f0e;
@@ -554,3 +557,5 @@ kbd {
     margin: 2rem 0;
   }
 }
+
+
