@@ -15,10 +15,14 @@ import type { EditorStorage } from "@/types.ts";
 import { EmptyEditor } from "./empty-editor.tsx";
 import { MenuBar } from "./menubar.tsx";
 import { UnsupportedFile } from "./unsupported-file.tsx";
+import { Placeholder } from "@tiptap/extensions";
 
 const lowlight = createLowlight(common);
 
 const extensions = [
+  Placeholder.configure({
+    placeholder: "Write something …",
+  }),
   TextStyleKit,
   StarterKit,
   Markdown.configure({ html: true }),
@@ -65,7 +69,10 @@ export default () => {
           editor && (
             <>
               <MenuBar editor={editor} onSave={handleSave} />
-              <EditorContent editor={editor} className="flex-1 overflow-y-auto" />
+              <EditorContent
+                editor={editor}
+                className="flex-1 overflow-y-auto"
+              />
             </>
           )
         ) : (
