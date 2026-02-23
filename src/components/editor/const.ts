@@ -1,14 +1,43 @@
-export const DEFAULT_HIGHLIGHT_COLOR = "#ffff00";
 export const HIGHLIGHT_COLORS = [
-  { name: "default", color: DEFAULT_HIGHLIGHT_COLOR },
-  { name: "yellow", color: "#fef9c3" },
-  { name: "green", color: "#dcfce7" },
-  { name: "blue", color: "#e0f2fe" },
-  { name: "purple", color: "#f3e8ff" },
-  { name: "red", color: "#ffe4e6" },
+  {
+    label: "Orange background",
+    value: "var(--tt-color-highlight-orange)",
+    border: "var(--tt-color-highlight-orange-contrast)",
+  },
+  {
+    label: "Yellow background",
+    value: "var(--tt-color-highlight-yellow)",
+    border: "var(--tt-color-highlight-yellow-contrast)",
+  },
+  {
+    label: "Green background",
+    value: "var(--tt-color-highlight-green)",
+    border: "var(--tt-color-highlight-green-contrast)",
+  },
+  {
+    label: "Blue background",
+    value: "var(--tt-color-highlight-blue)",
+    border: "var(--tt-color-highlight-blue-contrast)",
+  },
+  {
+    label: "Purple background",
+    value: "var(--tt-color-highlight-purple)",
+    border: "var(--tt-color-highlight-purple-contrast)",
+  },
+  {
+    label: "Red background",
+    value: "var(--tt-color-highlight-red)",
+    border: "var(--tt-color-highlight-red-contrast)",
+  },
 ] as const;
 
-export type HighlightColor = (typeof HIGHLIGHT_COLORS)[number]["name"];
+export type HighlightColor = (typeof HIGHLIGHT_COLORS)[number]["label"];
+
+export const DEFAULT_HIGHLIGHT_COLOR = HIGHLIGHT_COLORS[4].value;
+
+export const pickHighlightColorsByValue = (values: string[]) => {
+  return HIGHLIGHT_COLORS.filter((color) => values.includes(color.value));
+};
 
 export const defaultContent = `
 <h2>

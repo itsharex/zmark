@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/core";
 import { Ban } from "lucide-react";
-import { DEFAULT_HIGHLIGHT_COLOR, HIGHLIGHT_COLORS } from "./const";
+import { HIGHLIGHT_COLORS } from "./const";
 
 export const HighlightColorPicker = ({
   editor,
@@ -11,8 +11,6 @@ export const HighlightColorPicker = ({
   currentColor: string | null;
   onClose: () => void;
 }) => {
-  const effectiveColor = currentColor || DEFAULT_HIGHLIGHT_COLOR;
-
   const handleColorClick = (color: string) => {
     const { from, to } = editor.state.selection;
     const hasSelection = from !== to;
@@ -20,17 +18,21 @@ export const HighlightColorPicker = ({
     if (!hasSelection) {
       // 如果光标不在内容内部 表示接下来输入的不要高光了
       const $to = editor.state.selection.$to;
-      const isAtEnd = $to.parentOffset === $to.parent.content.size;
+      const highlightMarkType = editor.schema.marks.highlight;
+      const nodeAfter = $to.nodeAfter;
+      const nextHasSameHighlight = nodeAfter?.marks.some(
+        (m) => m.type === highlightMarkType && m.attrs.color === color
+      );
+      const isAtHighlightEnd = currentColor === color && !nextHasSameHighlight;
 
-      if (isAtEnd && effectiveColor === color) {
+      if (isAtHighlightEnd) {
         editor.chain().focus().unsetHighlight().run();
       }
-      // 光标在内容内部 直接关闭popover 不做更多处理
       onClose();
       return;
     }
 
-    if (effectiveColor === color) {
+    if (currentColor === color) {
       editor.chain().focus().unsetHighlight().run();
     } else {
       editor.chain().focus().setHighlight({ color }).run();
@@ -40,18 +42,22 @@ export const HighlightColorPicker = ({
 
   return (
     <div className="flex items-center gap-1.5 p-1">
-      {HIGHLIGHT_COLORS.map(({ name, color }) => (
+      {HIGHLIGHT_COLORS.map(({ label, value, border }) => (
         <button
-          key={name}
+          key={label}
           type="button"
-          onClick={() => handleColorClick(color)}
-          className={`w-5 h-5 rounded-full border transition-all hover:scale-110 ${
-            effectiveColor === color
-              ? "border-gray-800 outline outline-offset-1 outline-gray-400"
-              : "border-gray-300"
+          onClick={() => handleColorClick(value)}
+          className={`w-5 h-5 rounded-full border-2 transition-all hover:scale-110 ${
+            currentColor === value
+              ? "ring-2 ring-offset-1 ring-gray-400"
+              : ""
           }`}
-          style={{ backgroundColor: color, borderRadius: "50%" }}
-          title={name}
+          style={{
+            backgroundColor: value,
+            borderColor: border,
+            borderRadius: "50%",
+          }}
+          title={label}
         />
       ))}
       <div className="w-px h-5 bg-gray-300 mx-1" />

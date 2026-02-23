@@ -2,7 +2,8 @@ import "./index.scss";
 
 import { writeTextFile } from "@tauri-apps/plugin-fs";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import Highlight from "@tiptap/extension-highlight";
+import Highlight, { inputRegex, pasteRegex } from "@tiptap/extension-highlight";
+import { markInputRule, markPasteRule } from "@tiptap/core";
 import { TextStyleKit } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -16,6 +17,7 @@ import { EmptyEditor } from "./empty-editor.tsx";
 import { MenuBar } from "./menubar.tsx";
 import { UnsupportedFile } from "./unsupported-file.tsx";
 import { Placeholder } from "@tiptap/extensions";
+import { DEFAULT_HIGHLIGHT_COLOR } from "./const";
 
 const lowlight = createLowlight(common);
 
@@ -26,7 +28,33 @@ const extensions = [
   TextStyleKit,
   StarterKit,
   Markdown.configure({ html: true }),
-  Highlight.configure({
+  Highlight.extend({
+    addKeyboardShortcuts() {
+      return {};
+    },
+    addInputRules() {
+      return [
+        markInputRule({
+          find: inputRegex,
+          type: this.type,
+          getAttributes: () => ({
+            color: DEFAULT_HIGHLIGHT_COLOR,
+          }),
+        }),
+      ];
+    },
+    addPasteRules() {
+      return [
+        markPasteRule({
+          find: pasteRegex,
+          type: this.type,
+          getAttributes: () => ({
+            color: DEFAULT_HIGHLIGHT_COLOR,
+          }),
+        }),
+      ];
+    },
+  }).configure({
     multicolor: true,
   }),
   CodeBlockLowlight.configure({

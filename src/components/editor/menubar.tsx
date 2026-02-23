@@ -39,6 +39,7 @@ import {
 import { useKeyDisplay } from "@/hooks/use-key-display";
 import { HighlightColorPicker } from "./highlight-picker";
 import { menuBarStateSelector } from "./menubar-state";
+import { useColorHighlight } from "./use-color-highlight";
 
 type MenuBarProps = {
   editor: Editor;
@@ -53,6 +54,8 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
     editor,
     selector: menuBarStateSelector,
   });
+
+  useColorHighlight(editor);
 
   const modKey = keyDisplay.Mod === "Ctrl" ? "Ctrl" : "⌘";
   const altKey = keyDisplay.Mod === "Ctrl" ? "Alt" : "⌥";
