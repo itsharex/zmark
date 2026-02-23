@@ -62,7 +62,7 @@
 
   /* Code and preformatted text styles */
   code {
-    background-color: var(--purple-light);
+    background-color: var(--inline-code-background);
     border-radius: 0.4rem;
     color: var(--black);
     font-size: 0.85rem;
@@ -86,20 +86,42 @@
   }
 
   blockquote {
-    border-left: 3px solid var(--gray-3);
+    border-left: 3px solid var(--black);
     margin: 1.5rem 0;
     padding-left: 1rem;
   }
 
   hr {
     border: none;
-    border-top: 1px solid var(--gray-2);
+    border-top: 1px solid var(--black);
     margin: 2rem 0;
   }
 }
 
-.tiptap p.is-empty::before {
-  color: #adb5bd;
+.dark .tiptap {
+  code {
+    background-color: var(--inline-code-background);
+    color: var(--white);
+  }
+
+  pre {
+    background: #2d2d2d;
+    code {
+      background: none;
+    }
+  }
+
+  blockquote {
+    border-left-color: var(--white);
+  }
+
+  hr {
+    border-top-color: var(--white);
+  }
+}
+
+.tiptap p.is-empty:first-child::before {
+  color: var(--gray-4);
   content: attr(data-placeholder);
   float: left;
   height: 0;

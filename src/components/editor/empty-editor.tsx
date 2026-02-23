@@ -26,7 +26,7 @@ export const EmptyEditor = () => {
           size={64}
           className="text-muted-foreground/50"
         />
-        <h2 className="mt-6 text-2xl font-bold">欢迎使用 ZMark</h2>
+        <h2 className="mt-6 text-2xl font-bold">欢迎使用 zmark</h2>
         <p className="mt-2 text-muted-foreground">
           从左侧文件树选择一个文件开始编辑
         </p>

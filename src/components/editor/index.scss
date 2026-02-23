@@ -24,6 +24,20 @@
 
     --tt-bg-color: #fff;
     --tt-bg-color-contrast: rgba(0, 0, 0, .1);
+    --tt-border-color: rgba(61, 37, 20, .08);
+    --tt-scrollbar-color: rgba(61, 37, 20, .08);
+    --tt-cursor-color: var(--purple);
+    --tt-selection-color: rgba(106, 0, 245, 0.2);
+
+    --tt-color-text-gray: hsl(45, 2%, 46%);
+    --tt-color-text-brown: hsl(19, 31%, 47%);
+    --tt-color-text-orange: hsl(25, 80%, 50%);
+    --tt-color-text-yellow: hsl(36, 80%, 50%);
+    --tt-color-text-green: hsl(150, 50%, 40%);
+    --tt-color-text-blue: hsl(210, 70%, 50%);
+    --tt-color-text-purple: hsl(270, 60%, 50%);
+    --tt-color-text-pink: hsl(330, 70%, 50%);
+    --tt-color-text-red: hsl(0, 70%, 50%);
 
     --tt-color-highlight-yellow: #fef9c3;
     --tt-color-highlight-green: #dcfce7;
@@ -47,8 +61,41 @@
 }
 
 .dark {
+    --white: #e8e6e3;
+    --black: #e8e6e3;
+    --black-contrast: #fff;
+    --gray-1: rgba(255, 255, 255, .05);
+    --gray-2: rgba(255, 255, 255, .08);
+    --gray-3: rgba(255, 255, 255, .12);
+    --gray-4: rgba(255, 255, 255, .3);
+    --gray-5: rgba(255, 255, 255, .6);
+    --green: #22c55e;
+    --purple: #9d8aff;
+    --purple-contrast: #b8a8ff;
+    --purple-light: rgba(157, 138, 255, .1);
+    --yellow-contrast: #facc15;
+    --yellow: rgba(250, 204, 21, .4);
+    --yellow-light: #3d3a20;
+    --red: #ff6b4a;
+    --red-light: #4a2020;
+    --shadow: 0px 12px 33px 0px rgba(0, 0, 0, .3), 0px 3.618px 9.949px 0px rgba(0, 0, 0, .2);
+
     --tt-bg-color: #1a1a1a;
     --tt-bg-color-contrast: rgba(255, 255, 255, .1);
+    --tt-border-color: rgba(255, 255, 255, .1);
+    --tt-scrollbar-color: rgba(255, 255, 255, .1);
+    --tt-cursor-color: var(--purple);
+    --tt-selection-color: rgba(157, 138, 255, 0.3);
+
+    --tt-color-text-gray: hsl(0, 0%, 61%);
+    --tt-color-text-brown: hsl(18, 35%, 58%);
+    --tt-color-text-orange: hsl(25, 80%, 60%);
+    --tt-color-text-yellow: hsl(36, 80%, 60%);
+    --tt-color-text-green: hsl(150, 50%, 55%);
+    --tt-color-text-blue: hsl(210, 70%, 60%);
+    --tt-color-text-purple: hsl(270, 60%, 65%);
+    --tt-color-text-pink: hsl(330, 70%, 60%);
+    --tt-color-text-red: hsl(0, 70%, 60%);
 
     --tt-color-highlight-yellow: #6b6524;
     --tt-color-highlight-green: #509568;
@@ -154,7 +201,7 @@ button,input,select,textarea {
 }
 
 button:hover,input:hover,select:hover,textarea:hover {
-    background-color: var(--color-purple-100);
+    background-color: var(--gray-2);
     color: var(--black-contrast)
 }
 

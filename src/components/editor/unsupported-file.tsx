@@ -11,7 +11,7 @@ export const UnsupportedFile = ({ fileName }: UnsupportedFileProps) => {
         <FileX2 size={64} className="text-muted-foreground/50" />
         <h2 className="mt-6 text-2xl font-bold">不支持的文件类型</h2>
         <p className="mt-2 text-muted-foreground">
-          ZMark 仅支持编辑 Markdown 文件
+          zmark 仅支持编辑 Markdown 文件
         </p>
         <p className="mt-1 text-sm text-muted-foreground/70">
           {fileName}

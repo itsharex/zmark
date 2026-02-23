@@ -60,8 +60,7 @@ export const Tree = (props: ITreeProps) => {
       <SidebarMenuButton
         isActive={isActive}
         data-preview={isPreview}
-        // TODO: 选中文件的颜色
-        className="data-[active=true]:bg-(--purple) data-[active=true]:text-(--white)! data-[active=true]:hover:bg-(--purple-contrast)! data-[preview=true]:bg-purple-100"
+        className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground! data-[active=true]:hover:bg-primary/80! data-[preview=true]:bg-primary/10 dark:data-[preview=true]:bg-primary/20"
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
       >
@@ -91,7 +90,7 @@ export const Tree = (props: ITreeProps) => {
         <CollapsibleTrigger asChild>
           <SidebarMenuButton
             data-preview={isPreview}
-            className="data-[preview=true]:bg-purple-100"
+            className="data-[preview=true]:bg-primary/10 dark:data-[preview=true]:bg-primary/20"
             onClick={handleClick}
           >
             <ChevronRight className="transition-transform" />

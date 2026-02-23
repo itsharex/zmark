@@ -62,7 +62,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
 
   return (
     <div className="w-full sticky top-2 z-10 flex justify-center">
-      <div className="rounded-lg border border-gray-300 bg-white/80 p-2 shadow-lg backdrop-blur-md">
+      <div className="rounded-lg border border-border bg-background/95 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_20px_rgba(255,255,255,0.15)] backdrop-blur-md">
         <div className="button-group">
           <TooltipProvider>
             <Tooltip>

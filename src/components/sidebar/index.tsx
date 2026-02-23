@@ -23,6 +23,7 @@ import {
 import { ActionButtons } from "./action-buttons";
 import { InputDialog } from "./input-dialog";
 import { Tree } from "./tree";
+import { ThemeToggle } from "../theme-toggle";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [fileTree, setFileTree] = useState<TreeItem[]>([]);
@@ -93,22 +94,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       className="border-border bg-background"
       {...props}
     >
-      <SidebarHeader className="border-b border-border pb-2">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="/" className="flex items-center gap-3">
-                <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <GalleryVerticalEndIcon className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Documentation</span>
-                  <span className="text-xs text-muted-foreground">v1.0.0</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarHeader className="border-b border-border p-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+              <GalleryVerticalEndIcon className="size-4" />
+            </div>
+            <div className="flex flex-col gap-0.5 leading-none">
+              <span className="font-medium">zmark</span>
+              <span className="text-xs text-muted-foreground">v1.0.0</span>
+            </div>
+          </div>
+          <ThemeToggle />
+        </div>
       </SidebarHeader>
       <SidebarContent className="flex flex-col">
         <CollapseProvider>

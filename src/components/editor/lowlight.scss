@@ -73,3 +73,50 @@
     }
   }
 }
+
+.dark .tiptap pre {
+  background: #2d2d2d;
+
+  .hljs-comment,
+  .hljs-quote {
+    color: #8b8b8b;
+  }
+
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-attribute,
+  .hljs-tag,
+  .hljs-regexp,
+  .hljs-link,
+  .hljs-name,
+  .hljs-selector-id,
+  .hljs-selector-class {
+    color: #ff9d9d;
+  }
+
+  .hljs-number,
+  .hljs-meta,
+  .hljs-built_in,
+  .hljs-builtin-name,
+  .hljs-literal,
+  .hljs-type,
+  .hljs-params {
+    color: #ffcfa0;
+  }
+
+  .hljs-string,
+  .hljs-symbol,
+  .hljs-bullet {
+    color: #c5f9a8;
+  }
+
+  .hljs-title,
+  .hljs-section {
+    color: #fff9a8;
+  }
+
+  .hljs-keyword,
+  .hljs-selector-tag {
+    color: #8cf8ff;
+  }
+}
