@@ -7,8 +7,6 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { CollapseProvider } from "@/provider/collapse-provider";
 import { useEditorStore } from "@/stores/editor";
