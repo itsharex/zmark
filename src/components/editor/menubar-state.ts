@@ -20,6 +20,10 @@ export function menuBarStateSelector(ctx: EditorStateSnapshot<Editor>) {
     canHighlight: ctx.editor.can().chain().toggleHighlight().run() ?? false,
     currentHighlightColor: ctx.editor.getAttributes("highlight").color ?? null,
     canClearMarks: ctx.editor.can().chain().unsetAllMarks().run() ?? false,
+    isSuperscript: ctx.editor.isActive("superscript") ?? false,
+    canSuperscript: ctx.editor.can().chain().toggleSuperscript().run() ?? false,
+    isSubscript: ctx.editor.isActive("subscript") ?? false,
+    canSubscript: ctx.editor.can().chain().toggleSubscript().run() ?? false,
 
     // Block types
     isParagraph: ctx.editor.isActive("paragraph") ?? false,

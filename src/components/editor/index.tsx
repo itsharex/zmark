@@ -17,6 +17,8 @@ import { EmptyEditor } from "./empty-editor.tsx";
 import { MenuBar } from "./menubar.tsx";
 import { UnsupportedFile } from "./unsupported-file.tsx";
 import { Placeholder } from "@tiptap/extensions";
+import Superscript from "@tiptap/extension-superscript";
+import Subscript from "@tiptap/extension-subscript";
 import { DEFAULT_HIGHLIGHT_COLOR } from "./const";
 import { ListKit } from "@tiptap/extension-list";
 
@@ -62,6 +64,8 @@ const extensions = [
   CodeBlockLowlight.configure({
     lowlight,
   }),
+  Superscript,
+  Subscript,
 ];
 
 export default () => {

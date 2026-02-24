@@ -22,6 +22,8 @@
     "@tiptap/extension-code-block-lowlight": "^3.20.0",
     "@tiptap/extension-highlight": "^3.20.0",
     "@tiptap/extension-list": "^3.20.0",
+    "@tiptap/extension-subscript": "^3.20.0",
+    "@tiptap/extension-superscript": "^3.20.0",
     "@tiptap/extension-text-style": "^3.20.0",
     "@tiptap/extensions": "^3.20.0",
     "@tiptap/react": "^3.20.0",

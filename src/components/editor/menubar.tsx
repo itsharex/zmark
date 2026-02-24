@@ -21,10 +21,13 @@ import {
   Redo,
   Save,
   Strikethrough,
+  Subscript,
+  Superscript,
   Undo,
   WrapText,
 } from "lucide-react";
 import { useState } from "react";
+
 import {
   Popover,
   PopoverContent,
@@ -118,6 +121,36 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
               </TooltipTrigger>
               <TooltipContent>
                 <p>删除线</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => editor.chain().focus().toggleSuperscript().run()}
+                  disabled={!editorState.canSuperscript}
+                  className={editorState.isSuperscript ? "is-active" : ""}
+                >
+                  <Superscript size={16} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>上标（{modKey}+.）</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => editor.chain().focus().toggleSubscript().run()}
+                  disabled={!editorState.canSubscript}
+                  className={editorState.isSubscript ? "is-active" : ""}
+                >
+                  <Subscript size={16} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>下标（{modKey}+,）</p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
