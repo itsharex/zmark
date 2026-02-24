@@ -18,6 +18,7 @@ import { MenuBar } from "./menubar.tsx";
 import { UnsupportedFile } from "./unsupported-file.tsx";
 import { Placeholder } from "@tiptap/extensions";
 import { DEFAULT_HIGHLIGHT_COLOR } from "./const";
+import { ListKit } from "@tiptap/extension-list";
 
 const lowlight = createLowlight(common);
 
@@ -26,6 +27,7 @@ const extensions = [
     placeholder: "Write something …",
   }),
   TextStyleKit,
+  ListKit,
   StarterKit,
   Markdown.configure({ html: true }),
   Highlight.extend({
