@@ -1,7 +1,7 @@
 import { Toaster } from "sonner";
 import Editor from "./components/editor";
 import { AppSidebar } from "./components/sidebar";
-import { ThemeProvider } from "./components/theme-provider";
+import { ThemeProvider } from "./provider/theme-provider";
 import { SidebarProvider } from "./components/ui/sidebar";
 import { TooltipProvider } from "./components/ui/tooltip";
 
