@@ -127,7 +127,9 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
               <TooltipTrigger asChild>
                 <button
                   type="button"
-                  onClick={() => editor.chain().focus().toggleSuperscript().run()}
+                  onClick={() =>
+                    editor.chain().focus().toggleSuperscript().run()
+                  }
                   disabled={!editorState.canSuperscript}
                   className={editorState.isSuperscript ? "is-active" : ""}
                 >

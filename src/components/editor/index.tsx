@@ -1,10 +1,14 @@
 import "./index.scss";
 
 import { writeTextFile } from "@tauri-apps/plugin-fs";
+import { markInputRule, markPasteRule } from "@tiptap/core";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Highlight, { inputRegex, pasteRegex } from "@tiptap/extension-highlight";
-import { markInputRule, markPasteRule } from "@tiptap/core";
+import { ListKit } from "@tiptap/extension-list";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
 import { TextStyleKit } from "@tiptap/extension-text-style";
+import { Placeholder } from "@tiptap/extensions";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
@@ -13,14 +17,10 @@ import { Markdown } from "tiptap-markdown";
 import { useSaveShortcut } from "@/hooks/use-save-shortcut.ts";
 import { useEditorStore } from "@/stores/editor.ts";
 import type { EditorStorage } from "@/types.ts";
+import { DEFAULT_HIGHLIGHT_COLOR } from "./const";
 import { EmptyEditor } from "./empty-editor.tsx";
 import { MenuBar } from "./menubar.tsx";
 import { UnsupportedFile } from "./unsupported-file.tsx";
-import { Placeholder } from "@tiptap/extensions";
-import Superscript from "@tiptap/extension-superscript";
-import Subscript from "@tiptap/extension-subscript";
-import { DEFAULT_HIGHLIGHT_COLOR } from "./const";
-import { ListKit } from "@tiptap/extension-list";
 
 const lowlight = createLowlight(common);
 

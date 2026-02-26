@@ -19,7 +19,7 @@ export function useColorHighlight(editor: Editor | null) {
       const highlightMarkType = editor.schema.marks.highlight;
       const nodeAfter = $to.nodeAfter;
       const nextHasHighlight = nodeAfter?.marks.some(
-        (m) => m.type === highlightMarkType
+        (m) => m.type === highlightMarkType,
       );
       const isAtHighlightEnd = isActive && !nextHasHighlight;
 
@@ -70,6 +70,11 @@ export function useColorHighlight(editor: Editor | null) {
     currentColor,
     handleColorHighlight,
     handleRemoveHighlight,
-    canHighlight: editor?.can().chain().setHighlight({ color: DEFAULT_HIGHLIGHT_COLOR }).run() ?? false,
+    canHighlight:
+      editor
+        ?.can()
+        .chain()
+        .setHighlight({ color: DEFAULT_HIGHLIGHT_COLOR })
+        .run() ?? false,
   };
 }

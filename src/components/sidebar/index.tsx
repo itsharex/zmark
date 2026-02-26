@@ -18,10 +18,10 @@ import {
   getFileTree,
   getTreeKey,
 } from "@/utils/file";
+import { ThemeToggle } from "../theme-toggle";
 import { ActionButtons } from "./action-buttons";
 import { InputDialog } from "./input-dialog";
 import { Tree } from "./tree";
-import { ThemeToggle } from "../theme-toggle";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [fileTree, setFileTree] = useState<TreeItem[]>([]);

@@ -21,7 +21,7 @@ export const HighlightColorPicker = ({
       const highlightMarkType = editor.schema.marks.highlight;
       const nodeAfter = $to.nodeAfter;
       const nextHasSameHighlight = nodeAfter?.marks.some(
-        (m) => m.type === highlightMarkType && m.attrs.color === color
+        (m) => m.type === highlightMarkType && m.attrs.color === color,
       );
       const isAtHighlightEnd = currentColor === color && !nextHasSameHighlight;
 
@@ -48,9 +48,7 @@ export const HighlightColorPicker = ({
           type="button"
           onClick={() => handleColorClick(value)}
           className={`w-5 h-5 rounded-full border-2 transition-all hover:scale-110 ${
-            currentColor === value
-              ? "ring-2 ring-offset-1 ring-gray-400"
-              : ""
+            currentColor === value ? "ring-2 ring-offset-1 ring-gray-400" : ""
           }`}
           style={{
             backgroundColor: value,

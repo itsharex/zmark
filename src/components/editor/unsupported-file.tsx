@@ -13,9 +13,7 @@ export const UnsupportedFile = ({ fileName }: UnsupportedFileProps) => {
         <p className="mt-2 text-muted-foreground">
           zmark 仅支持编辑 Markdown 文件
         </p>
-        <p className="mt-1 text-sm text-muted-foreground/70">
-          {fileName}
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground/70">{fileName}</p>
       </div>
     </div>
   );
