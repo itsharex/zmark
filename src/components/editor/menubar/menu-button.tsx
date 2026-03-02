@@ -4,22 +4,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { MenuButtonProps } from "./types";
+import type { MenuButtonProps } from "../../../types/menubar-operations";
 
 export const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
   (
-    {
-      icon: Icon,
-      label,
-      shortcut,
-      onClick,
-      isActive,
-      disabled,
-      className,
-      ...props
-    },
+    originalProps,
     ref,
-  ) => (
+  ) => {
+    const { icon: Icon, label, shortcut, onClick, isActive, disabled, className, ...props } = originalProps;
+    return (
     <Tooltip>
       <TooltipTrigger asChild>
         <button
@@ -39,7 +32,8 @@ export const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
         </p>
       </TooltipContent>
     </Tooltip>
-  ),
+  )
+  },
 );
 
 MenuButton.displayName = "MenuButton";

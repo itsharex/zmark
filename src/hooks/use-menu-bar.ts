@@ -7,8 +7,8 @@ import {
   getHistoryActions,
   getMainActions,
   getNodeActions,
-} from "./menu-items";
-import { menuBarStateSelector } from "./state";
+} from "../consts/operations";
+import { menuBarStateSelector } from "../components/editor/menubar/state";
 
 export const useMenuBar = (editor: Editor, onSave: () => void) => {
   const { shortcuts } = useKeyDisplay();

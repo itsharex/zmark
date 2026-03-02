@@ -9,7 +9,7 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { HighlightColorPicker } from "./highlight-picker";
 import { MenuButton } from "./menu-button";
-import { useMenuBar } from "./use-menu-bar";
+import { useMenuBar } from "../../../hooks/use-menu-bar";
 
 type MenuBarProps = {
   editor: Editor;
