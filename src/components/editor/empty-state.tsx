@@ -1,22 +1,33 @@
 import { GalleryVerticalEndIcon } from "lucide-react";
 import { useKeyDisplay } from "@/hooks/use-key-display";
 
-const Shortcut = ({ keys }: { keys: string[] }) => {
-  const keyDisplay = useKeyDisplay();
+const Shortcut = ({ label }: { label: string }) => {
+  const { shortcuts } = useKeyDisplay();
+  const shortcut = shortcuts[label as keyof typeof shortcuts];
+
+  if (typeof shortcut !== "string") return null;
+
+  const keys = shortcut.split("+");
 
   return (
-    <div className="flex items-center gap-1.5">
-      {keys.map((key) => (
+    <div className="flex items-center gap-1">
+      {keys.map((k) => (
         <kbd
-          key={key}
-          className="px-2 py-1.5 text-xs font-sans rounded-md border border-b-2 bg-muted text-muted-foreground"
+          key={k}
+          className="flex h-5 w-5 items-center justify-center rounded-md border border-b-2 bg-muted font-sans text-xs! font-medium text-muted-foreground shadow-sm"
         >
-          {keyDisplay[key] || key}
+          {k}
         </kbd>
       ))}
     </div>
   );
 };
+
+const SHORTCUTS_CONFIG = [
+  { label: "save", text: "保存文件" },
+  { label: "bold", text: "切换粗体" },
+  { label: "italic", text: "切换斜体" },
+];
 
 export const EmptyEditor = () => {
   return (
@@ -32,20 +43,14 @@ export const EmptyEditor = () => {
         </p>
 
         <div className="mt-12 grid grid-cols-[auto_auto] justify-center gap-x-8 gap-y-4">
-          <p className="text-sm text-muted-foreground self-center justify-self-end">
-            保存文件
-          </p>
-          <Shortcut keys={["Mod", "S"]} />
-
-          <p className="text-sm text-muted-foreground self-center justify-self-end">
-            切换粗体
-          </p>
-          <Shortcut keys={["Mod", "B"]} />
-
-          <p className="text-sm text-muted-foreground self-center justify-self-end">
-            切换斜体
-          </p>
-          <Shortcut keys={["Mod", "I"]} />
+          {SHORTCUTS_CONFIG.map((item) => (
+            <div key={item.label} className="contents">
+              <p className="text-base text-muted-foreground self-center justify-self-end">
+                {item.text}
+              </p>
+              <Shortcut label={item.label} />
+            </div>
+          ))}
         </div>
       </div>
     </div>

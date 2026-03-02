@@ -30,8 +30,8 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useKbStore } from "./kb-store";
-import { Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 
 const ChatAvatar = ({ role }: { role: ChatRole }) => {
   const config = CHAT_ROLE_UI_CONFIG[role];

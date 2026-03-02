@@ -49,6 +49,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "4",
+    "react-doctor": "^0.0.29",
     "sass-embedded": "^1.97.3",
     "shadcn": "^3.8.5",
     "tailwindcss": "^4.2.1",

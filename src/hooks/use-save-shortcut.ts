@@ -6,7 +6,7 @@ export const useSaveShortcut = (onSave: () => void) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const isSaveShortcut =
-        keyDisplay.Mod === "Ctrl"
+        keyDisplay.shortcuts.save === "Ctrl"
           ? event.ctrlKey && event.key === "s"
           : event.metaKey && event.key === "s";
 
