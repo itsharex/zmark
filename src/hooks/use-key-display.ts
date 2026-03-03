@@ -35,6 +35,7 @@ export const useKeyDisplay = () => {
     codeBlock: formatShortcut(["Mod", "Alt", "C"]),
     blockquote: formatShortcut(["Mod", "Shift", "B"]),
     hardBreak: formatShortcut(["Shift", "Enter"]),
+    link: formatShortcut(["Mod", "K"]),
   };
 
   return {

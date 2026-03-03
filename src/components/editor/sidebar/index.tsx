@@ -48,7 +48,6 @@ export function AppSidebar({ mode, ...props }: ISidebarProps) {
       const dataDir = await getDataDir();
       setBasePath(dataDir);
       setFileTree(files);
-      console.log(files);
     };
     fetchMdFiles();
   }, []);
@@ -58,8 +57,7 @@ export function AppSidebar({ mode, ...props }: ISidebarProps) {
       try {
         const unwatch = await watch(
           "markdowns",
-          (event) => {
-            console.log("File system event:", event);
+          () => {
             refreshFileTree();
           },
           {
@@ -69,7 +67,6 @@ export function AppSidebar({ mode, ...props }: ISidebarProps) {
           },
         );
         unwatchRef.current = unwatch;
-        console.log("File watcher setup successfully");
       } catch (error) {
         console.error("Failed to setup file watcher:", error);
       }

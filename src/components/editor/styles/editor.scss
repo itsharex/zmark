@@ -39,6 +39,22 @@
     text-wrap: pretty;
   }
 
+  /* Link styles */
+  a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--primary);
+      text-decoration-thickness: 2px;
+      opacity: 0.8;
+    }
+  }
+
   h1,
   h2 {
     margin-top: 3.5rem;

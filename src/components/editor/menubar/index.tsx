@@ -1,6 +1,5 @@
 import type { Editor } from "@tiptap/core";
 import { Highlighter } from "lucide-react";
-
 import {
   Popover,
   PopoverContent,
@@ -9,6 +8,7 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useMenuBar } from "@/hooks/use-menu-bar";
 import { HighlightColorPicker } from "./highlight-picker";
+import { LinkPopover } from "./link-popover";
 import { MenuButton } from "./menu-button";
 
 type MenuBarProps = {
@@ -35,6 +35,8 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             {mainActions.map((action) => (
               <MenuButton key={action.label} {...action} />
             ))}
+
+            <LinkPopover editor={editor} shortcut={shortcuts.link} />
 
             <Popover
               open={highlightPopoverOpen}

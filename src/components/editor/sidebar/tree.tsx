@@ -7,10 +7,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useCollapse } from "@/providers/collapse-provider";
 import { useEditorStore } from "@/stores/editor";
 import type { TreeItem } from "@/types/editor";
 import { getTreeKey } from "@/utils/file";
-import { useCollapse } from "@/providers/collapse-provider";
 import { TruncatedTooltip } from "../../common/truncated-tooltip";
 import {
   SidebarMenuButton,
