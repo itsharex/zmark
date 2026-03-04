@@ -10,7 +10,11 @@ import { useColorHighlight } from "@/hooks/use-color-highlight";
 import { useKeyDisplay } from "@/hooks/use-key-display";
 import { menuBarStateSelector } from "@/stores/editor";
 
-export const useMenuBar = (editor: Editor, onSave: () => void) => {
+export const useMenuBar = (
+  editor: Editor,
+  onSave: () => void,
+  onImageUpload?: () => void,
+) => {
   const { shortcuts } = useKeyDisplay();
   const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(false);
 
@@ -25,6 +29,7 @@ export const useMenuBar = (editor: Editor, onSave: () => void) => {
     editor,
     editorState,
     onSave,
+    onImageUpload,
     shortcuts,
   };
 

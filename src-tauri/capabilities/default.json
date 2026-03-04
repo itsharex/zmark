@@ -19,7 +19,35 @@
     },
     {
       "identifier": "fs:allow-write-file",
-      "scope": ["*"]
+      "allow": [
+        {
+          "path": "$DOCUMENT/markdowns/**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-file",
+      "allow": [
+        {
+          "path": "$DOCUMENT/markdowns/**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [
+        {
+          "path": "$DOCUMENT/markdowns/**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-mkdir",
+      "allow": [
+        {
+          "path": "$DOCUMENT/markdowns/**"
+        }
+      ]
     },
     {
       "identifier": "fs:allow-watch",

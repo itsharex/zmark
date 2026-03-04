@@ -11,6 +11,7 @@
     @apply bg-background text-foreground;
   }
   body[data-scroll-locked] {
+    /* biome-ignore lint/complexity/noImportantStyles: 覆盖 Radix UI 在 body 注入的行内 margin-right 样式 */
     margin-right: 0 !important;
   }
 }

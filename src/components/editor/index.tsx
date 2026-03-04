@@ -5,6 +5,7 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { markInputRule, markPasteRule } from "@tiptap/core";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Highlight, { inputRegex, pasteRegex } from "@tiptap/extension-highlight";
+import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import { ListKit } from "@tiptap/extension-list";
 import Subscript from "@tiptap/extension-subscript";
@@ -14,14 +15,13 @@ import { Placeholder } from "@tiptap/extensions";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
-import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Markdown } from "tiptap-markdown";
 import { DEFAULT_HIGHLIGHT_COLOR } from "@/consts/highlight";
-import { useLinkPopover } from "@/hooks/use-link-popover";
 import { useSaveShortcut } from "@/hooks/use-save-shortcut";
 import { useEditorStore } from "@/stores/editor";
 import type { EditorStorage } from "@/types/editor.ts";
+import { handleImageUpload } from "@/utils/file";
 import { EmptyEditor } from "./fallback/empty-state.tsx";
 import { UnsupportedFile } from "./fallback/unsupported-file.tsx";
 import { MenuBar } from "./menubar/index.tsx";
@@ -67,6 +67,9 @@ const extensions = [
   }),
   CodeBlockLowlight.configure({
     lowlight,
+  }),
+  Image.configure({
+    allowBase64: true,
   }),
   Link.extend({
     addInputRules() {
@@ -127,6 +130,41 @@ export default () => {
             }
             return false;
           },
+        },
+        handlePaste: (view, event) => {
+          const items = Array.from(event.clipboardData?.items || []);
+          const imageItem = items.find((item) =>
+            item.type.startsWith("image/"),
+          );
+
+          if (imageItem) {
+            event.preventDefault();
+            const file = imageItem.getAsFile();
+            if (file) {
+              handleImageUpload(file)
+                .then((url) => {
+                  console.log("Image uploaded to:", url);
+                  if (editor) {
+                    editor.chain().focus().setImage({ src: url }).run();
+                  } else {
+                    view.dispatch(
+                      view.state.tr.replaceSelectionWith(
+                        view.state.schema.nodes.image.create({ src: url }),
+                      ),
+                    );
+                  }
+                  toast.success("图片已上传");
+                })
+                .catch((err) => {
+                  console.error("Image upload failed:", err);
+                  const errorMessage =
+                    err instanceof Error ? err.message : String(err);
+                  toast.error(`图片上传失败: ${errorMessage}`);
+                });
+              return true;
+            }
+          }
+          return false;
         },
       },
     },

@@ -28,6 +28,8 @@ pub struct Document {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+// TODO: dead code, remove it
+#[allow(dead_code)]
 pub struct Chunk {
     pub id: String,
     pub doc_id: String,

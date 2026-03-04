@@ -1,3 +1,4 @@
+import { convertFileSrc } from "@tauri-apps/api/core";
 import {
   BaseDirectory,
   dirname,
@@ -5,6 +6,7 @@ import {
   join,
 } from "@tauri-apps/api/path";
 import { exists, mkdir, readDir, stat, writeFile } from "@tauri-apps/plugin-fs";
+import { useEditorStore } from "@/stores/editor";
 import type { TreeItem } from "@/types/editor";
 
 /**
@@ -96,3 +98,43 @@ export async function createDirectory(dirPath: string, basePath?: string) {
     await mkdir(finalPath);
   }
 }
+
+export const handleImageUpload = async (
+  file: File,
+  _onProgress?: (event: { progress: number }) => void,
+  _abortSignal?: AbortSignal,
+): Promise<string> => {
+  // 1. 获取当前编辑文件的路径
+  const { curPath } = useEditorStore.getState();
+
+  if (!curPath) {
+    throw new Error("请先保存文档，再上传图片");
+  }
+
+  // 2. 确定图片保存目录 (当前文档目录下的 assets 文件夹)
+  const docDir = await dirname(curPath);
+  const assetsDir = await join(docDir, "assets");
+
+  // 3. 确保目录存在
+  const assetsExists = await exists(assetsDir);
+  if (!assetsExists) {
+    await mkdir(assetsDir, { recursive: true });
+  }
+
+  // 4. 生成文件名
+  const ext = file.name.split(".").pop() || "png";
+  const fileName = `${crypto.randomUUID()}.${ext}`;
+  const filePath = await join(assetsDir, fileName);
+
+  // 5. 读取文件内容并写入
+  const arrayBuffer = await file.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+
+  await writeFile(filePath, uint8Array);
+
+  // 6. 返回可预览的 URL
+  // 使用 convertFileSrc 将本地路径转换为 asset:// 协议的 URL
+  const assetUrl = convertFileSrc(filePath);
+
+  return assetUrl;
+};

@@ -1,5 +1,11 @@
 /* Basic editor styles */
 .tiptap {
+  // 核心修复：彻底解决选中图片出现宽蓝色底色的问题
+  // 将编辑器容器的选中背景设为透明，这样图片这种 node 就不会带出蓝色背景了
+  &::selection {
+    background: transparent;
+  }
+
   :first-child {
     margin-top: 0;
   }
@@ -25,6 +31,22 @@
   // data-type=taskList padding-x=0
   [data-type="taskList"] {
     padding-left: 0;
+  }
+
+  img {
+    max-width: 50%; 
+    min-width: 50px;
+    border-radius: 8px; 
+    background: #f0f0f0;
+    user-select: none;   // 禁止浏览器原生文本选择
+
+    &::selection {
+      background: transparent; // 彻底清除选中时的蓝色底色
+    }
+
+    &.ProseMirror-selectednode {
+      outline: 3px solid var(--primary);
+    }
   }
 
   /* Heading styles */

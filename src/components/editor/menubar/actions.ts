@@ -9,6 +9,7 @@ import {
   Heading4,
   Heading5,
   Heading6,
+  Image,
   Italic,
   List,
   ListOrdered,
@@ -32,6 +33,7 @@ interface GetActionsParams {
   editor: Editor;
   editorState: MenuBarState;
   onSave: () => void;
+  onImageUpload?: () => void;
   shortcuts: ReturnType<typeof useKeyDisplay>["shortcuts"];
 }
 
@@ -39,6 +41,7 @@ export const getMainActions = ({
   editor,
   editorState,
   onSave,
+  onImageUpload,
   shortcuts,
 }: GetActionsParams): MenuButtonProps[] => [
   {
@@ -46,6 +49,11 @@ export const getMainActions = ({
     label: "保存",
     shortcut: shortcuts.save,
     onClick: onSave,
+  },
+  {
+    icon: Image,
+    label: "上传图片",
+    onClick: onImageUpload || (() => {}),
   },
   {
     icon: Bold,
