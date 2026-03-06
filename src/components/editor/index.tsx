@@ -25,6 +25,7 @@ import { handleImageUpload } from "@/utils/file";
 import { EmptyEditor } from "./fallback/empty-state.tsx";
 import { UnsupportedFile } from "./fallback/unsupported-file.tsx";
 import { MenuBar } from "./menubar/index.tsx";
+import { SlashCommand, slashSuggestion } from "./slash-command/slash-extension";
 
 const lowlight = createLowlight(common);
 
@@ -36,6 +37,9 @@ const extensions = [
   ListKit,
   StarterKit,
   Markdown.configure({ html: true }),
+  SlashCommand.configure({
+    suggestion: slashSuggestion,
+  }),
   Highlight.extend({
     addKeyboardShortcuts() {
       return {};
