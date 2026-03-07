@@ -35,7 +35,14 @@ const extensions = [
   }),
   TextStyleKit,
   ListKit,
-  StarterKit,
+  StarterKit.configure({
+    link: false,
+    bulletList: false,
+    listItem: false,
+    listKeymap: false,
+    orderedList: false,
+    codeBlock: false,
+  }),
   Markdown.configure({ html: true }),
   SlashCommand.configure({
     suggestion: slashSuggestion,
