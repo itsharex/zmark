@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2026-03-07
+
+### 🐛 Bug Fixes
+
+- **Release**: 修复生产环境缺失环境变量导致的白屏问题
+- **Auth**: 优化 Supabase 初始化逻辑，避免应用崩溃
+
 ## [1.1.1] - 2026-03-07
 
 ### ⚡ Performance
