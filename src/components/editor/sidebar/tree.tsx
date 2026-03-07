@@ -1,4 +1,4 @@
-import { join, sep } from "@tauri-apps/api/path";
+import { sep } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { ChevronRight, File, Folder } from "lucide-react";
 import { useEffect, useState } from "react";

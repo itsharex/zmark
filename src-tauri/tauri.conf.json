@@ -3,6 +3,13 @@
   "productName": "zmark",
   "version": "1.0.0",
   "identifier": "cn.fanzong.zmark",
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": ["zmark"]
+      }
+    }
+  },
   "build": {
     "beforeDevCommand": "pnpm dev:vite",
     "devUrl": "http://localhost:1420",

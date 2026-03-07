@@ -6,7 +6,8 @@
   "scripts": {
     "dev:vite": "vite",
     "dev": "tauri dev",
-    "build": "tsc && vite build",
+    "build:vite": "tsc && vite build",
+    "build": "tauri build",
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
