@@ -127,17 +127,6 @@ export const getNodeActions = ({
     onClick: () => editor.chain().focus().setParagraph().run(),
     isActive: editorState.isParagraph,
   },
-  ...([1, 2, 3, 4, 5, 6] as const).map((level) => ({
-    icon: [Heading1, Heading2, Heading3, Heading4, Heading5, Heading6][
-      level - 1
-    ],
-    label: `标题 ${level}`,
-    shortcut: shortcuts.heading(level),
-    onClick: () => editor.chain().focus().toggleHeading({ level }).run(),
-    isActive: editorState[
-      `isHeading${level}` as keyof typeof editorState
-    ] as boolean,
-  })),
   {
     icon: List,
     label: "无序列表",

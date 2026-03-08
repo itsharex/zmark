@@ -17,6 +17,7 @@ export const useMenuBar = (
 ) => {
   const { shortcuts } = useKeyDisplay();
   const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(false);
+  const [headingPopoverOpen, setHeadingPopoverOpen] = useState(false);
 
   const editorState = useEditorState({
     editor,
@@ -36,6 +37,8 @@ export const useMenuBar = (
   return {
     highlightPopoverOpen,
     setHighlightPopoverOpen,
+    headingPopoverOpen,
+    setHeadingPopoverOpen,
     mainActions: getMainActions(actionParams),
     nodeActions: getNodeActions(actionParams),
     historyActions: getHistoryActions(actionParams),

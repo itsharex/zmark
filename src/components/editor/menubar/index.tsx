@@ -1,5 +1,15 @@
 import type { Editor } from "@tiptap/core";
-import { Highlighter, List } from "lucide-react";
+import {
+  Heading,
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
+  Highlighter,
+  List,
+} from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 import {
@@ -10,6 +20,7 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useMenuBar } from "@/hooks/use-menu-bar";
 import { handleImageUpload } from "@/utils/file";
+import { HeadingPicker } from "./heading-picker";
 import { HighlightColorPicker } from "./highlight-picker";
 import { LinkPopover } from "./link-popover";
 import { MenuButton } from "./menu-button";
@@ -55,12 +66,25 @@ export const MenuBar = ({
   const {
     highlightPopoverOpen,
     setHighlightPopoverOpen,
+    headingPopoverOpen,
+    setHeadingPopoverOpen,
     mainActions,
     nodeActions,
     historyActions,
     shortcuts,
     editorState,
   } = useMenuBar(editor, onSave, handleImageButtonClick);
+
+  // 计算当前应该显示的标题图标
+  const getCurrentHeadingIcon = () => {
+    if (editorState.isHeading1) return Heading1;
+    if (editorState.isHeading2) return Heading2;
+    if (editorState.isHeading3) return Heading3;
+    if (editorState.isHeading4) return Heading4;
+    if (editorState.isHeading5) return Heading5;
+    if (editorState.isHeading6) return Heading6;
+    return Heading;
+  };
 
   return (
     <div className="w-full sticky top-2 z-10 flex justify-center">
@@ -102,6 +126,33 @@ export const MenuBar = ({
                   editor={editor}
                   currentColor={editorState.currentHighlightColor}
                   onClose={() => setHighlightPopoverOpen(false)}
+                />
+              </PopoverContent>
+            </Popover>
+
+            <Popover
+              open={headingPopoverOpen}
+              onOpenChange={setHeadingPopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <MenuButton
+                  icon={getCurrentHeadingIcon()}
+                  label="标题"
+                  isActive={
+                    editorState.isHeading1 ||
+                    editorState.isHeading2 ||
+                    editorState.isHeading3 ||
+                    editorState.isHeading4 ||
+                    editorState.isHeading5 ||
+                    editorState.isHeading6
+                  }
+                />
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="center">
+                <HeadingPicker
+                  editor={editor}
+                  editorState={editorState}
+                  onClose={() => setHeadingPopoverOpen(false)}
                 />
               </PopoverContent>
             </Popover>
