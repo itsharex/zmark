@@ -12,7 +12,8 @@
     "lint": "biome lint",
     "check": "biome check",
     "fix": "biome check --write",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "echo \"No tests specified\" && exit 0",
+    "prepare": "husky"
   },
   "dependencies": {
     "@radix-ui/react-visually-hidden": "^1.2.4",
@@ -62,6 +63,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "4",
+    "husky": "^9.1.7",
     "react-doctor": "^0.0.29",
     "sass-embedded": "^1.97.3",
     "shadcn": "^3.8.5",

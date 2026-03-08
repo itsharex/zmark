@@ -6,7 +6,6 @@ import {
   Heading4,
   Heading5,
   Heading6,
-  Pilcrow,
 } from "lucide-react";
 import type { MenuBarState } from "@/stores/editor";
 

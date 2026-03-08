@@ -15,6 +15,7 @@
     "staticlib",
     "tauri",
     "Tiptap",
+    "VITE",
     "zmark"
   ]
 }
