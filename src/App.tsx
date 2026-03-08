@@ -16,7 +16,7 @@ import { SidebarProvider } from "./components/ui/sidebar";
 import { Toaster } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { ThemeProvider } from "./providers/theme-provider";
-import { useAuthStore } from "./store/authStore";
+import { useAuthStore } from "./stores/authStore";
 import { useEditorStore } from "./stores/editor";
 
 const App = () => {
