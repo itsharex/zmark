@@ -1,5 +1,5 @@
 import type { Editor } from "@tiptap/core";
-import { Highlighter } from "lucide-react";
+import { Highlighter, List } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 import {
@@ -17,9 +17,16 @@ import { MenuButton } from "./menu-button";
 type MenuBarProps = {
   editor: Editor;
   onSave: () => void;
+  isTocOpen: boolean;
+  onToggleToc: () => void;
 };
 
-export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
+export const MenuBar = ({
+  editor,
+  onSave,
+  isTocOpen,
+  onToggleToc,
+}: MenuBarProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 菜单栏图片按钮的点击回调，通过 ref 间接点击隐藏的 input
@@ -106,6 +113,13 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
             {historyActions.map((action) => (
               <MenuButton key={action.label} {...action} />
             ))}
+
+            <MenuButton
+              icon={List}
+              label={isTocOpen ? "隐藏目录" : "显示目录"}
+              onClick={onToggleToc}
+              isActive={isTocOpen}
+            />
           </TooltipProvider>
         </div>
       </div>

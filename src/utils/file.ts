@@ -15,9 +15,12 @@ import {
   stat,
   writeFile,
 } from "@tauri-apps/plugin-fs";
-import type { TreeItem } from "@/types/editor";
 import { useEditorStore } from "@/stores/editor";
-import { addOrUpdateFile, removeFile as removeSearchIndex } from "@/utils/search";
+import type { TreeItem } from "@/types/editor";
+import {
+  addOrUpdateFile,
+  removeFile as removeSearchIndex,
+} from "@/utils/search";
 
 /**
  * 获取数据目录路径

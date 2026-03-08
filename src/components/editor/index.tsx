@@ -15,6 +15,7 @@ import { Placeholder } from "@tiptap/extensions";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Markdown } from "tiptap-markdown";
 import { DEFAULT_HIGHLIGHT_COLOR } from "@/consts/highlight";
@@ -27,6 +28,7 @@ import { EmptyEditor } from "./fallback/empty-state.tsx";
 import { UnsupportedFile } from "./fallback/unsupported-file.tsx";
 import { MenuBar } from "./menubar/index.tsx";
 import { SlashCommand, slashSuggestion } from "./slash-command/slash-extension";
+import { TableOfContents } from "./toc";
 
 const lowlight = createLowlight(common);
 
@@ -204,6 +206,7 @@ export default () => {
   const showEditor = curPath;
   const isMdFile = curPath.endsWith(".md");
   const fileName = curPath.split("/").pop() || curPath;
+  const [isTocOpen, setIsTocOpen] = useState(true);
 
   return (
     <div className="flex flex-col h-full">
@@ -211,11 +214,19 @@ export default () => {
         isMdFile ? (
           editor && (
             <>
-              <MenuBar editor={editor} onSave={handleSave} />
-              <EditorContent
+              <MenuBar
                 editor={editor}
-                className="flex-1 overflow-y-auto"
+                onSave={handleSave}
+                isTocOpen={isTocOpen}
+                onToggleToc={() => setIsTocOpen(!isTocOpen)}
               />
+              <div className="flex flex-1 overflow-hidden relative">
+                <EditorContent
+                  editor={editor}
+                  className="flex-1 h-full overflow-y-auto"
+                />
+                {isTocOpen && <TableOfContents editor={editor} />}
+              </div>
             </>
           )
         ) : (
