@@ -11,7 +11,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { useEditorStore, useSearchStore } from "@/stores";
-import { search, subscribeToSearch } from "@/utils";
+import { resolveMarkdownImages, search, subscribeToSearch } from "@/utils";
 
 export function SearchCommand() {
   const { isOpen, setIsOpen, toggle } = useSearchStore();
@@ -59,7 +59,8 @@ export function SearchCommand() {
   const handleSelect = async (path: string) => {
     try {
       const content = await readTextFile(path);
-      setContent(content);
+      const resolvedContent = await resolveMarkdownImages(content, path);
+      setContent(resolvedContent);
       setCurPath(path);
       setIsOpen(false);
     } catch (error) {
