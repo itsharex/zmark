@@ -9,7 +9,7 @@
 *   **技术选型**： `https://github.com/lucaong/minisearch` 或 `https://github.com/nextapps-de/flexsearch` (轻量级客户端索引库)。
 *   **任务列表**：
     - [x] **增量索引**：在文件保存逻辑中触发索引更新。
-    - [ ] **检索层**：使用 Web Worker 处理大规模文档索引，避免阻塞主线程。
+    - [x] **检索层**：使用 Web Worker 处理大规模文档索引，避免阻塞主线程。
     - [x] **UI 实现**：通过 Command 面板（类似 VSCode 的 `Cmd+P`）展示搜索结果，支持上下键选择和回车跳转。
 
 ## 2. 多人实时协作 (Real-time Collaboration)
@@ -32,7 +32,7 @@
 *   **技术选型**：Tiptap `Suggestion` 扩展。
 *   **任务列表**：
     - [x] **Slash Command**：监听键盘输入 `/`，弹出快速插入菜单，支持插入代码块、图片或标题。
-    - [ ] **Bubble Menu**：当检测到文本选中时，在光标上方显示浮动菜单，提供加粗、链接、高亮等常用操作。
+    - [x] **Bubble Menu**：当检测到文本选中时，在光标上方显示浮动菜单，提供加粗、链接、高亮等常用操作。
 
 ## 5. 多格式导出引擎 (Export Engine)
 *   **功能描述**：将富文本内容完美还原为 Markdown、PDF、HTML 或 Word。

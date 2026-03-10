@@ -1,7 +1,14 @@
 import type { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
-import { Bold, Code, Highlighter, Italic, Strikethrough } from "lucide-react";
+import {
+  Bold,
+  Code,
+  Highlighter,
+  Italic,
+  ListX,
+  Strikethrough,
+} from "lucide-react";
 import { useState } from "react";
 import {
   Popover,
@@ -65,6 +72,12 @@ export const EditorBubbleMenu = ({ editor }: BubbleMenuProps) => {
           shortcut={shortcuts.code}
           onClick={() => editor.chain().focus().toggleCode().run()}
           isActive={editorState.isCode}
+          className="h-8 w-8 p-0 flex items-center justify-center rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+        />
+        <MenuButton
+          icon={ListX}
+          label="清除格式"
+          onClick={() => editor.chain().focus().unsetAllMarks().run()}
           className="h-8 w-8 p-0 flex items-center justify-center rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
         />
 
