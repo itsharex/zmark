@@ -226,7 +226,7 @@ export const MenuBar = ({
 
             <MenuButton
               icon={History}
-              label={isHistoryOpen ? "隐藏历史" : "历史版本"}
+              label={isHistoryOpen ? "隐藏对比" : "版本对比"}
               onClick={onToggleHistory}
               isActive={isHistoryOpen}
             />

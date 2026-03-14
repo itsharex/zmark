@@ -26,6 +26,7 @@ import { EmptyEditor } from "./fallback/empty-state.tsx";
 import { UnsupportedFile } from "./fallback/unsupported-file.tsx";
 import { MenuBar } from "./menubar/index.tsx";
 import { TableOfContents } from "./toc";
+import { VersionHistory } from "./version-history";
 
 export default () => {
   const { content, curPath } = useEditorStore();
@@ -154,18 +155,21 @@ export default () => {
                 )}
               </div>
               <Sheet open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
-                <SheetContent side="right" className="w-[90vw]! max-w-[90vw]!">
+                <SheetContent
+                  side="right"
+                  className="w-[90vw]! max-w-[90vw]! gap-0"
+                >
                   <SheetHeader>
-                    <SheetTitle>历史版本</SheetTitle>
+                    <SheetTitle>版本对比</SheetTitle>
                   </SheetHeader>
-                  <div className="flex items-center justify-center h-[80%]">
-                    <div className="text-center text-muted-foreground">
-                      <div className="w-48 h-48 mx-auto mb-4 bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-lg flex items-center justify-center">
-                        <span className="text-4xl">📜</span>
-                      </div>
-                      <p>历史版本功能开发中...</p>
-                      <p className="text-sm mt-2">敬请期待</p>
-                    </div>
+                  <div className="h-full">
+                    <VersionHistory
+                      curPath={curPath}
+                      getContent={() => {
+                        const storage = editor.storage as EditorStorage;
+                        return storage.markdown.getMarkdown();
+                      }}
+                    />
                   </div>
                 </SheetContent>
               </Sheet>
