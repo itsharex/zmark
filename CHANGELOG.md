@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-03-14
+
+### ✨ New Features
+
+- **Version Control**: 实现文档版本对比功能与历史版本 Drawer UI
+- **Editor**: BubbleMenu 支持及清除格式功能
+- **Search**: 实现基于 Web Worker 的异步搜索功能
+- **Markdown**: 添加 markdown 图片路径转换功能
+
+### 🐛 Bug Fixes
+
+- **Search**: 搜索 markdown 文件时需要解析图片引用
+
+### ⚡ Performance
+
+- **Build**: 添加压缩插件并更新依赖版本
+
+### ♻️ Refactor
+
+- **Cleanup**: 移除调试用的 console.log 语句
+- **Config**: 更新 biome.json 配置并修复数组索引 key 警告
+
 ## [1.2.0] - 2026-03-08
 
 ### ✨ New Features

@@ -14,6 +14,21 @@ fn greet(name: &str) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .setup(|app| {
+            #[cfg(debug_assertions)] // 仅在开发环境
+            {
+                let window = app.get_webview_window("main").unwrap();
+                window.open_devtools();
+            }
+            #[cfg(not(debug_assertions))] // 在生产环境也开启
+            {
+                // 注意：在生产环境开启 DevTools 可能有安全风险，但在调试白屏问题时很有用
+                // 发布正式版时请记得移除
+                let window = app.get_webview_window("main").unwrap();
+                window.open_devtools(); // 如果需要在启动时自动打开，取消注释这行
+            }
+            Ok(())
+        })
         .plugin(tauri_plugin_fs::init())
         // 允许打开浏览器
         .plugin(tauri_plugin_shell::init())

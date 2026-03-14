@@ -2,7 +2,8 @@ import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { compression } from "vite-plugin-compression2";
+
+// import { compression } from "vite-plugin-compression2";
 
 const host = process.env.TAURI_DEV_HOST;
 
@@ -10,11 +11,11 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    compression({
-      include: [/\.(js)$/, /\.(css)$/, /\.(html)$/],
-      threshold: 1400,
-      algorithms: ["brotliCompress"],
-    }),
+    // compression({
+    //   include: [/\.(js)$/, /\.(css)$/, /\.(html)$/],
+    //   threshold: 1400,
+    //   algorithms: ["brotliCompress"],
+    // }),
   ],
 
   clearScreen: false,
