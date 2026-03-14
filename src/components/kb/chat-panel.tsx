@@ -194,7 +194,10 @@ export const ChatPanel = () => {
             )}
             {messages.map((msg: ChatMessage, i: number) => (
               <div
-                key={`${i}-${msg.role}`}
+                key={`${
+                  // biome-ignore lint/suspicious/noArrayIndexKey: <temp>
+                  i
+                }-${msg.role}`}
                 className="flex gap-4 p-4 hover:bg-muted/50 rounded-xl transition-colors"
               >
                 <ChatAvatar role={msg.role} />
@@ -222,7 +225,10 @@ export const ChatPanel = () => {
                           <div className="space-y-2 pt-2 border-t">
                             {msg.thinking.retrieved_docs.map((doc, idx) => (
                               <div
-                                key={`${doc.filename}-${idx}`}
+                                key={`${doc.filename}-${
+                                  // biome-ignore lint/suspicious/noArrayIndexKey: <temp>
+                                  idx
+                                }`}
                                 className="bg-background rounded p-2 text-xs border shadow-sm"
                               >
                                 <div className="flex items-center justify-between mb-1">

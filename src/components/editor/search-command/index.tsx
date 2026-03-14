@@ -100,7 +100,10 @@ export function SearchCommand() {
         {parts.map((part, i) =>
           part.toLowerCase() === lowerQuery ? (
             <span
-              key={`${i}-${part}`}
+              key={`${
+                // biome-ignore lint/suspicious/noArrayIndexKey: <temp>
+                i
+              }-${part}`}
               className="bg-yellow-200 dark:bg-yellow-800 dark:text-yellow-100 rounded px-0.5 font-medium"
             >
               {part}
