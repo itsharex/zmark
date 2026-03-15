@@ -125,7 +125,7 @@ export default () => {
   const showEditor = curPath;
   const isMdFile = curPath.endsWith(".md");
   const fileName = curPath.split("/").pop() || curPath;
-  const [isTocOpen, setIsTocOpen] = useState(true);
+  const [isTocOpen, setIsTocOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const tocItems = useTableOfContents(editor);
