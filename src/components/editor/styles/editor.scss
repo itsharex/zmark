@@ -1,11 +1,5 @@
 /* Basic editor styles */
 .tiptap {
-  // 核心修复：彻底解决选中图片出现宽蓝色底色的问题
-  // 将编辑器容器的选中背景设为透明，这样图片这种 node 就不会带出蓝色背景了
-  &::selection {
-    background: transparent;
-  }
-
   :first-child {
     margin-top: 0;
   }
