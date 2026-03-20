@@ -73,6 +73,8 @@ export const SuggestionList = forwardRef<
                 index === selectedIndex && "bg-accent text-accent-foreground",
               )}
               onClick={() => selectItem(index)}
+              onMouseDown={(e) => e.preventDefault()}
+              onMouseEnter={() => setSelectedIndex(index)}
               type="button"
             >
               <div className="flex h-5 w-5 items-center justify-center text-muted-foreground">
