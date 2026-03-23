@@ -1,16 +1,30 @@
-import { Code, Github, Loader2 } from "lucide-react";
+import { FastForward, Github, Loader2, Send } from "lucide-react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Separator } from "../ui/separator";
 
 export const LoginButton = () => {
-  const { login, loading, error } = useAuthStore();
+  const { login, loading, error, sendLoginMagicLink } = useAuthStore();
 
-  const handleLogin = async () => {
-    await login();
-    if (error) {
-      toast.error(error);
+  const [email, setEmail] = useState("");
+
+  const normalizedEmail = useMemo(() => email.trim(), [email]);
+
+  const handleGithubLogin = async () => {
+    const err = await login();
+    if (err) toast.error(err);
+  };
+
+  const handleMagicLink = async () => {
+    const err = await sendLoginMagicLink(normalizedEmail);
+    if (err) {
+      toast.error(err);
+      return;
     }
+    toast.success("登录链接已发送，请在邮箱中点击完成认证");
   };
 
   const handleDevSkip = () => {
@@ -59,28 +73,61 @@ export const LoginButton = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <Button
-        onClick={handleLogin}
-        disabled={loading}
-        variant="secondary"
-        className="w-full"
-      >
-        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Github />}
-        {loading ? "正在登录..." : "使用 GitHub 登录"}
-      </Button>
-
-      {import.meta.env.DEV && (
-        <Button
-          onClick={handleDevSkip}
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-2">
+        <Input
+          type="email"
+          placeholder="m@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           disabled={loading}
-          variant="secondary"
-          className="w-full mt-2 border-dashed border-primary/50 text-primary hover:bg-primary/5"
+          className="bg-background border-border/60"
+        />
+        <Button
+          type="button"
+          onClick={handleMagicLink}
+          disabled={loading || !normalizedEmail}
+          size="icon"
+          variant="outline"
+          aria-label="发送登录链接"
         >
-          <Code className="h-4 w-4 mr-2" />
-          开发环境免登
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send />}
         </Button>
-      )}
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Separator className="flex-1" />
+        <div className="text-xs text-muted-foreground">OR</div>
+        <Separator className="flex-1" />
+      </div>
+
+      <div className="flex justify-center gap-2">
+        <Button
+          type="button"
+          onClick={handleGithubLogin}
+          disabled={loading}
+          size="icon"
+          variant="outline"
+          className="rounded-full"
+          aria-label="使用 GitHub 登录"
+        >
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Github />}
+        </Button>
+
+        {import.meta.env.DEV && (
+          <Button
+            type="button"
+            onClick={handleDevSkip}
+            disabled={loading}
+            size="icon"
+            variant="outline"
+            className="rounded-full border-dashed border-primary/50 text-primary hover:bg-primary/5"
+            aria-label="开发环境免登"
+          >
+            <FastForward />
+          </Button>
+        )}
+      </div>
 
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>

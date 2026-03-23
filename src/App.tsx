@@ -1,5 +1,5 @@
 import { FileText, Library, Loader2, LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { SearchCommand } from "@/components/editor/search-command";
 import { getAllMarkdownFiles, indexFiles } from "@/utils";
@@ -21,6 +21,10 @@ const App = () => {
   const { curPath } = useEditorStore();
   const [mode, setMode] = useState<"editor" | "kb">("editor");
   const { initialize, isInitializing, session, logout } = useAuthStore();
+  const loginBackgroundRef = useRef<HTMLDivElement | null>(null);
+  const canvasNestRef = useRef<
+    import("canvas-nest.js").CanvasNestInstance | null
+  >(null);
 
   useEffect(() => {
     initialize();
@@ -38,6 +42,54 @@ const App = () => {
     };
     buildIndex();
   }, []);
+
+  useEffect(() => {
+    if (isInitializing || session) return;
+
+    let cancelled = false;
+
+    const mount = async () => {
+      const el = loginBackgroundRef.current;
+      if (!el) return;
+
+      const { default: CanvasNest } = await import("canvas-nest.js");
+      if (cancelled) return;
+
+      const color = document.documentElement.classList.contains("dark")
+        ? "255,255,255"
+        : "0,0,0";
+
+      const instance = new CanvasNest(el, {
+        color,
+        opacity: 0.5,
+        count: 100,
+        zIndex: 0,
+      });
+
+      const speedScale = 0.35;
+      for (const p of instance.points ?? []) {
+        if (typeof p.xa === "number") p.xa *= speedScale;
+        if (typeof p.ya === "number") p.ya *= speedScale;
+      }
+
+      canvasNestRef.current = instance;
+    };
+
+    void mount();
+
+    return () => {
+      cancelled = true;
+      canvasNestRef.current?.destroy?.();
+      canvasNestRef.current = null;
+
+      const el = loginBackgroundRef.current;
+      if (el) {
+        for (const canvas of Array.from(el.querySelectorAll("canvas"))) {
+          canvas.remove();
+        }
+      }
+    };
+  }, [isInitializing, session]);
 
   const handleLogout = async () => {
     await logout();
@@ -66,8 +118,12 @@ const App = () => {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : !session ? (
-          <div className="flex h-screen w-full items-center justify-center bg-background">
-            <div className="w-full max-w-sm p-8 space-y-4 border rounded-lg shadow-sm">
+          <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-background">
+            <div
+              ref={loginBackgroundRef}
+              className="pointer-events-none absolute inset-0"
+            />
+            <div className="relative z-10 w-full max-w-sm p-8 space-y-4 border rounded-lg shadow-xl backdrop-blur-sm bg-background/80">
               <h1 className="text-2xl font-bold text-center mb-6">
                 Welcome to ZMark
               </h1>

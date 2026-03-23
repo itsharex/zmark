@@ -7,6 +7,9 @@
     "cdylib",
     "cmdk",
     "Collab",
+    "CRDT",
+    "fanzong",
+    "Hocuspocus",
     "katex",
     "minisearch",
     "Pilcrow",
@@ -15,10 +18,13 @@
     "rusqlite",
     "Shadcn",
     "staticlib",
+    "supabase",
     "tauri",
     "Tiptap",
     "Unlisten",
+    "unresolve",
     "VITE",
+    "ydoc",
     "zmark"
   ]
 }

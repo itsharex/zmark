@@ -14,7 +14,7 @@ const Shortcut = ({ label }: { label: string }) => {
       {keys.map((k) => (
         <kbd
           key={k}
-          className="flex h-5 min-w-5 w-[fit-content] items-center justify-center rounded-md border border-b-2 bg-muted font-sans text-xs! font-medium text-muted-foreground shadow-sm"
+          className="flex h-5 min-w-5 w-fit items-center justify-center rounded-md border border-b-2 bg-muted font-sans text-xs! font-medium text-muted-foreground shadow-sm"
         >
           {k}
         </kbd>

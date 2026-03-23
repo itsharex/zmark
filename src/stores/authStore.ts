@@ -1,6 +1,12 @@
 import type { Session, User } from "@supabase/supabase-js";
 import { create } from "zustand";
-import { getSession, loginWithGitHub, logoutFromGitHub } from "../utils/auth";
+import {
+  ensureAuthCallbackListener,
+  getSession,
+  loginWithGitHub,
+  logoutFromGitHub,
+  sendLoginMagicLink,
+} from "../utils/auth";
 import { supabase } from "../utils/supabase-client";
 
 export interface UserProfile {
@@ -17,7 +23,8 @@ interface AuthState {
   loading: boolean;
   isInitializing: boolean;
   error: string | null;
-  login: () => Promise<void>;
+  login: () => Promise<string | null>;
+  sendLoginMagicLink: (email: string) => Promise<string | null>;
   logout: () => Promise<void>;
   initialize: () => Promise<void>;
 }
@@ -47,26 +54,36 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async () => {
     set({ loading: true, error: null });
     try {
-      const { session, error } = await loginWithGitHub();
+      const { error } = await loginWithGitHub();
       if (error) {
-        set({
-          error: error instanceof Error ? error.message : String(error),
-          loading: false,
-        });
-      } else if (session) {
-        set({
-          session,
-          user: extractUserProfile(session.user),
-          loading: false,
-        });
-      } else {
-        set({ loading: false });
+        const message = error instanceof Error ? error.message : String(error);
+        set({ error: message, loading: false });
+        return message;
       }
+      set({ loading: false });
+      return null;
     } catch (e) {
-      set({
-        error: e instanceof Error ? e.message : "登录过程中发生未知错误",
-        loading: false,
-      });
+      const message = e instanceof Error ? e.message : "登录过程中发生未知错误";
+      set({ error: message, loading: false });
+      return message;
+    }
+  },
+
+  sendLoginMagicLink: async (email) => {
+    set({ loading: true, error: null });
+    try {
+      const { error } = await sendLoginMagicLink(email);
+      if (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        set({ error: message, loading: false });
+        return message;
+      }
+      set({ loading: false });
+      return null;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "发送登录链接失败";
+      set({ error: message, loading: false });
+      return message;
     }
   },
 
@@ -129,6 +146,10 @@ export const useAuthStore = create<AuthState>((set) => ({
     //   });
     //   return;
     // }
+
+    ensureAuthCallbackListener({
+      onError: (message) => set({ error: message }),
+    });
 
     // 1. 获取初始 Session
     try {
