@@ -25,9 +25,6 @@ interface ISidebarProps extends React.ComponentProps<typeof Sidebar> {
   mode: "editor" | "kb";
 }
 
-import { Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
 export function AppSidebar({ mode, ...props }: ISidebarProps) {
   const [fileTree, setFileTree] = useState<TreeItem[]>([]);
   const [basePath, setBasePath] = useState("");
@@ -37,13 +34,9 @@ export function AppSidebar({ mode, ...props }: ISidebarProps) {
     onConfirm: (value: string) => void;
   } | null>(null);
 
-  // 新增：协作房间弹窗状态
-  const [collabDialogOpen, setCollabDialogOpen] = useState(false);
-
   const unwatchRef = useRef<(() => void) | null>(null);
 
-  const { setPreviewPath, previewPath, setRoomName, roomName } =
-    useEditorStore();
+  const { setPreviewPath, previewPath } = useEditorStore();
 
   const refreshFileTree = useCallback(async () => {
     const files = await getFileTree();
@@ -119,10 +112,6 @@ export function AppSidebar({ mode, ...props }: ISidebarProps) {
     setDialogOpen(true);
   };
 
-  const handleJoinCollab = () => {
-    setCollabDialogOpen(true);
-  };
-
   const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       const dataDir = await getDataDir();
@@ -148,29 +137,6 @@ export function AppSidebar({ mode, ...props }: ISidebarProps) {
               />
             </div>
 
-            {/* 协作入口按钮 */}
-            <div className="px-3 py-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full justify-start text-muted-foreground hover:text-primary"
-                onClick={handleJoinCollab}
-              >
-                <Users className="w-4 h-4 mr-2" />
-                {roomName ? `当前房间: ${roomName}` : "发起/加入协作"}
-              </Button>
-              {roomName && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start text-red-500 hover:text-red-600 mt-1"
-                  onClick={() => setRoomName(null)}
-                >
-                  退出当前协作
-                </Button>
-              )}
-            </div>
-
             <SidebarMenu className="px-1">
               {fileTree.map((item) => (
                 <Tree
@@ -192,17 +158,6 @@ export function AppSidebar({ mode, ...props }: ISidebarProps) {
           title={dialogConfig.title}
         />
       )}
-      <InputDialog
-        open={collabDialogOpen}
-        onClose={() => setCollabDialogOpen(false)}
-        onConfirm={(name) => {
-          if (name) {
-            setRoomName(name);
-          }
-        }}
-        title="输入协作房间名称 (自动创建或加入)"
-        placeholder="例如: project-a-docs"
-      />
     </Sidebar>
   );
 }

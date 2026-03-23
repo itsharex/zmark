@@ -18,7 +18,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useSaveShortcut, useTableOfContents } from "@/hooks";
-import { useEditorStore } from "@/stores";
+import { useCollabStore, useEditorStore } from "@/stores";
 import type { EditorStorage } from "@/types/editor.ts";
 import {
   addOrUpdateFile,
@@ -33,8 +33,17 @@ import { MenuBar } from "./menubar/index.tsx";
 import { TableOfContents } from "./toc";
 import { VersionHistory } from "./version-history";
 
-export default () => {
-  const { content, curPath, roomName } = useEditorStore();
+export default function Editor({
+  mode,
+}: {
+  mode?: "editor" | "kb" | "collab";
+}) {
+  const { content, curPath: storeCurPath, activeCollabId } = useEditorStore();
+  const { files } = useCollabStore();
+
+  const collabId = mode === "collab" ? activeCollabId : null;
+  const curPath = mode === "editor" ? storeCurPath : "";
+  const currentFile = collabId ? files.find((f) => f.id === collabId) : null;
 
   // 使用 useState 的懒初始化保证 ydoc 只被创建一次（避免 React StrictMode 下 useMemo 多次执行的问题）
   const [ydoc] = useState(() => new Y.Doc());
@@ -42,7 +51,7 @@ export default () => {
 
   // 在 useEffect 中处理副作用：建立网络连接
   useEffect(() => {
-    if (!roomName) {
+    if (!collabId) {
       setProvider(null);
       return;
     }
@@ -52,13 +61,13 @@ export default () => {
 
     const prov = new HocuspocusProvider({
       url: collaborationUrl,
-      name: roomName, // 使用动态房间号
+      name: collabId, // 使用文档ID作为房间号
       document: ydoc,
       onConnect() {
-        console.log(`CRDT Connected to ${roomName}`);
+        console.log(`CRDT Connected to ${collabId}`);
       },
       onSynced() {
-        console.log(`CRDT Synced with ${roomName}`);
+        console.log(`CRDT Synced with ${collabId}`);
       },
       onDisconnect() {
         console.log("CRDT Disconnected");
@@ -72,7 +81,7 @@ export default () => {
       prov.destroy();
       setProvider(null);
     };
-  }, [ydoc, roomName]); // 添加 roomName 依赖
+  }, [ydoc, collabId]); // 添加 collabId 依赖
 
   // 使用 useMemo 固定当前用户的随机身份
   const userInfo = useMemo(
@@ -89,8 +98,8 @@ export default () => {
   const activeExtensions = useMemo(() => {
     const base = [...extensions];
 
-    // 只有在开启协作模式（有 roomName）时，才注入协作相关的扩展
-    if (roomName) {
+    // 只有在开启协作模式（有 collabId）时，才注入协作相关的扩展
+    if (collabId) {
       base.push(
         Collaboration.configure({
           document: ydoc,
@@ -109,13 +118,13 @@ export default () => {
     }
 
     return base;
-  }, [ydoc, provider, userInfo, roomName]);
+  }, [ydoc, provider, userInfo, collabId]);
 
   const editor = useEditor(
     {
       extensions: activeExtensions,
       // 恢复内容初始化：非协作模式下使用 content，协作模式下由 Yjs 接管
-      content: roomName ? undefined : content,
+      content: collabId ? undefined : content,
       editorProps: {
         handleDOMEvents: {
           click: (_, event) => {
@@ -186,12 +195,12 @@ export default () => {
     const storage = editor.storage as EditorStorage;
     const markdown = storage.markdown.getMarkdown();
 
-    if (roomName) {
+    if (collabId && currentFile) {
       // 协作模式且没有关联本地文件：调用 Tauri 的另存为对话框
       try {
         const filePath = await save({
           filters: [{ name: "Markdown", extensions: ["md"] }],
-          defaultPath: `${roomName}.md`,
+          defaultPath: `${currentFile.name}.md`,
         });
 
         if (filePath) {
@@ -230,11 +239,10 @@ export default () => {
   useSaveShortcut(handleSave);
 
   // 恢复正常的显示逻辑
-  const showEditor = curPath || roomName;
-  // const isMdFile = curPath ? curPath.endsWith(".md") : true; // 协作模式默认是 md
-  const isMdFile = Boolean(roomName) || curPath.endsWith(".md");
-  const fileName = roomName
-    ? `协作房间: ${roomName}` // 其实没用 可以搜一下 fileName 是干啥的
+  const showEditor = curPath || collabId;
+  const isMdFile = Boolean(collabId) || curPath.endsWith(".md");
+  const fileName = collabId
+    ? `协作文档: ${currentFile?.name || "未知"}`
     : curPath?.split("/").pop() || curPath;
   const [isTocOpen, setIsTocOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -294,4 +302,4 @@ export default () => {
       )}
     </div>
   );
-};
+}

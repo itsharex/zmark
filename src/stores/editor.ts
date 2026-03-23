@@ -11,9 +11,9 @@ interface EditorState {
   previewPath: string;
   setPreviewPath: (path: string) => void;
 
-  // 新增：协作房间状态
-  roomName: string | null;
-  setRoomName: (roomName: string | null) => void;
+  // 协作文件ID状态
+  activeCollabId: string | null;
+  setActiveCollabId: (id: string | null) => void;
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -24,8 +24,8 @@ export const useEditorStore = create<EditorState>((set) => ({
   previewPath: "",
   setPreviewPath: (previewPath) => set({ previewPath }),
 
-  roomName: null,
-  setRoomName: (roomName) => set({ roomName }),
+  activeCollabId: null,
+  setActiveCollabId: (id) => set({ activeCollabId: id }),
 }));
 
 /**
