@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-03-23
+
+### ✨ New Features
+
+- **Collaboration**: 添加协作文档功能并重构协作模块
+- **Auth**: 添加开发环境免登功能
+
+## [1.4.0] - 2026-03-20
+
+### ✨ New Features
+
+- **Collaboration**: 添加实时协作编辑功能
+
+### 🐛 Bug Fixes
+
+- **Auth**: 移除开发环境模拟以启用真实认证流程
+
 ## [1.3.0] - 2026-03-14
 
 ### ✨ New Features
