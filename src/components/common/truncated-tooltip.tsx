@@ -21,7 +21,7 @@ export const TruncatedTooltip = ({ content }: { content: TreeItem }) => {
   }, []);
 
   const span = (
-    <span ref={ref} className="truncate">
+    <span ref={ref} className="truncate h-8 leading-8">
       {textContent}
     </span>
   );
