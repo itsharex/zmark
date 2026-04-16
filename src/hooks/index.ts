@@ -1,3 +1,4 @@
+export * from "./use-collaboration";
 export * from "./use-color-highlight";
 export * from "./use-is-mac";
 export * from "./use-key-display";

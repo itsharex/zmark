@@ -1,24 +1,21 @@
 import "katex/dist/katex.min.css";
 import "./styles/index.scss";
 
-import { HocuspocusProvider } from "@hocuspocus/provider";
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 import { EditorContent, useEditor } from "@tiptap/react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { IndexeddbPersistence } from "y-indexeddb";
-import * as Y from "yjs";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useSaveShortcut, useTableOfContents } from "@/hooks";
+import { useCollaboration, useSaveShortcut, useTableOfContents } from "@/hooks";
 import { useAuthStore, useCollabStore, useEditorStore } from "@/stores";
 import type { EditorStorage } from "@/types/editor.ts";
 import {
@@ -26,7 +23,6 @@ import {
   handleImageUpload,
   unresolveMarkdownImages,
 } from "@/utils";
-import { supabase } from "@/utils/supabase-client";
 import { EditorBubbleMenu } from "./bubble-menu";
 import { extensions } from "./extensions";
 import { EmptyEditor } from "./fallback/empty-state.tsx";
@@ -34,24 +30,6 @@ import { UnsupportedFile } from "./fallback/unsupported-file.tsx";
 import { MenuBar } from "./menubar/index.tsx";
 import { TableOfContents } from "./toc";
 import { VersionHistory } from "./version-history";
-
-const uint8ToBase64 = (bytes: Uint8Array) => {
-  let binary = "";
-  const chunkSize = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary);
-};
-
-const base64ToUint8 = (base64: string) => {
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
-};
 
 export default function Editor({
   mode,
@@ -66,123 +44,7 @@ export default function Editor({
   const curPath = mode === "editor" ? storeCurPath : "";
   const currentFile = collabId ? files.find((f) => f.id === collabId) : null;
 
-  // 使用 useState 的懒初始化保证 ydoc 只被创建一次（避免 React StrictMode 下 useMemo 多次执行的问题）
-  const [ydoc] = useState(() => new Y.Doc());
-  const [provider, setProvider] = useState<HocuspocusProvider | null>(null);
-
-  const canUseSupabase = Boolean(
-    import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY,
-  );
-
-  useEffect(() => {
-    if (!collabId) return;
-    const persistence = new IndexeddbPersistence(
-      `zmark-collab:${collabId}`,
-      ydoc,
-    );
-    return () => {
-      persistence.destroy();
-    };
-  }, [collabId, ydoc]);
-
-  useEffect(() => {
-    if (!collabId || !canUseSupabase) return;
-
-    let cancelled = false;
-
-    const restoreFromSupabase = async () => {
-      const { data, error } = await supabase
-        .from("collab_documents")
-        .select("y_update")
-        .eq("id", collabId)
-        .maybeSingle();
-
-      if (cancelled) return;
-      if (error) return;
-
-      const yUpdate = data?.y_update;
-      if (!yUpdate) return;
-
-      try {
-        Y.applyUpdate(ydoc, base64ToUint8(yUpdate));
-      } catch {
-        return;
-      }
-    };
-
-    restoreFromSupabase();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [collabId, canUseSupabase, ydoc]);
-
-  useEffect(() => {
-    if (!collabId || !canUseSupabase) return;
-
-    let saveTimer: number | null = null;
-    let lastSavedBase64: string | null = null;
-
-    const flushSave = async () => {
-      saveTimer = null;
-      const update = Y.encodeStateAsUpdate(ydoc);
-      const base64 = uint8ToBase64(update);
-      if (base64 === lastSavedBase64) return;
-
-      const { error } = await supabase
-        .from("collab_documents")
-        .upsert({ id: collabId, y_update: base64 });
-
-      if (!error) {
-        lastSavedBase64 = base64;
-      }
-    };
-
-    const onUpdate = () => {
-      if (saveTimer) window.clearTimeout(saveTimer);
-      saveTimer = window.setTimeout(() => {
-        flushSave();
-      }, 1500);
-    };
-
-    ydoc.on("update", onUpdate);
-
-    return () => {
-      ydoc.off("update", onUpdate);
-      if (saveTimer) window.clearTimeout(saveTimer);
-      flushSave();
-    };
-  }, [collabId, canUseSupabase, ydoc]);
-
-  // 在 useEffect 中处理副作用：建立网络连接
-  useEffect(() => {
-    if (!collabId) {
-      setProvider(null);
-      return;
-    }
-
-    const collaborationUrl =
-      import.meta.env.VITE_COLLAB_URL ?? "ws://localhost:1234";
-
-    const prov = new HocuspocusProvider({
-      url: collaborationUrl,
-      name: collabId, // 使用文档ID作为房间号
-      document: ydoc,
-      onConnect() {},
-      onSynced() {},
-      onDisconnect() {
-        console.log("CRDT Disconnected");
-      },
-    });
-
-    setProvider(prov);
-
-    // 组件卸载或重新执行 effect 时销毁连接
-    return () => {
-      prov.destroy();
-      setProvider(null);
-    };
-  }, [ydoc, collabId]); // 添加 collabId 依赖
+  const { ydoc, provider } = useCollaboration(collabId);
 
   const [userColor] = useState(
     () =>
