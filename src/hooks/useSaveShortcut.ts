@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useKeyDisplay } from "./use-key-display";
+import { useKeyDisplay } from "./useKeyDisplay";
 
 export const useSaveShortcut = (onSave: () => void) => {
   const { isMac } = useKeyDisplay();

@@ -1,5 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
-import { NodeViewContent, type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import {
+  NodeViewContent,
+  type NodeViewProps,
+  NodeViewWrapper,
+} from "@tiptap/react";
 import { Check, Copy, Play } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

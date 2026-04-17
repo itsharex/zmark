@@ -1,4 +1,4 @@
-import { useIsMac } from "./use-is-mac";
+import { useIsMac } from "./useIsMac";
 
 type ShortcutKey = "Mod" | "Alt" | "Shift" | string;
 

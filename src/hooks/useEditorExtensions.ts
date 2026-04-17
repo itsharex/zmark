@@ -3,7 +3,7 @@ import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 import { useMemo } from "react";
 import type { Doc } from "yjs";
-import { extensions } from "../extensions";
+import { extensions } from "../components/editor/extensions";
 
 interface UseEditorExtensionsProps {
   collabId: string | null;
