@@ -1,3 +1,4 @@
+export * from "./useAiCopilot";
 export * from "./useCollaboration";
 export * from "./useColorHighlight";
 export * from "./useEditorEvents";

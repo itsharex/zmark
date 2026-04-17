@@ -73,7 +73,8 @@ pub fn run() {
             commands::knowledge_base::chat,
             commands::git::git_file_history,
             commands::git::git_file_content,
-            commands::runner::run_python
+            commands::runner::run_python,
+            commands::ai::ai_copilot
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

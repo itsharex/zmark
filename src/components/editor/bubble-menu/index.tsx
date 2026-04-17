@@ -21,6 +21,7 @@ import { menuBarStateSelector } from "@/stores";
 import { HighlightColorPicker } from "../menubar/highlight-picker";
 import { LinkPopover } from "../menubar/link-popover";
 import { MenuButton } from "../menubar/menu-button";
+import { AiCopilotPopover } from "./ai-popover";
 
 interface BubbleMenuProps {
   editor: Editor;
@@ -83,6 +84,7 @@ export const EditorBubbleMenu = ({ editor }: BubbleMenuProps) => {
 
         <div className="w-px h-4 bg-border mx-0.5" />
 
+        <AiCopilotPopover editor={editor} shortcut={shortcuts.aiCopilot} />
         <LinkPopover editor={editor} shortcut={shortcuts.link} />
 
         <Popover open={highlightOpen} onOpenChange={setHighlightOpen}>

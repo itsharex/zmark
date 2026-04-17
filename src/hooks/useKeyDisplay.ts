@@ -37,6 +37,7 @@ export const useKeyDisplay = () => {
     blockquote: formatShortcut(["Mod", "Shift", "B"]),
     hardBreak: formatShortcut(["Shift", "Enter"]),
     link: formatShortcut(["Mod", "K"]),
+    aiCopilot: formatShortcut(["Mod", "J"]),
   };
 
   return {
