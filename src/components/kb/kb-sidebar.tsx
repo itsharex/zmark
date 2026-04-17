@@ -81,10 +81,11 @@ export function KbSidebar({
     try {
       await createKnowledgeBase(newKbName);
       setNewKbName("");
-      setIsCreating(false);
       toast.success("知识库创建成功");
     } catch (error) {
       toast.error(`创建失败: ${error}`);
+    } finally {
+      setIsCreating(false);
     }
   };
 

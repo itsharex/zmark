@@ -78,15 +78,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { error } = await loginWithGitHub();
       if (error) {
         const message = error instanceof Error ? error.message : String(error);
-        set({ error: message, loading: false });
+        set({ error: message });
         return message;
       }
-      set({ loading: false });
       return null;
     } catch (e) {
       const message = e instanceof Error ? e.message : "登录过程中发生未知错误";
-      set({ error: message, loading: false });
+      set({ error: message });
       return message;
+    } finally {
+      set({ loading: false });
     }
   },
 
@@ -96,15 +97,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { error } = await sendLoginMagicLink(email);
       if (error) {
         const message = error instanceof Error ? error.message : String(error);
-        set({ error: message, loading: false });
+        set({ error: message });
         return message;
       }
-      set({ loading: false });
       return null;
     } catch (e) {
       const message = e instanceof Error ? e.message : "发送登录链接失败";
-      set({ error: message, loading: false });
+      set({ error: message });
       return message;
+    } finally {
+      set({ loading: false });
     }
   },
 
@@ -118,56 +120,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const { error } = await logoutFromGitHub();
       if (error) {
-        set({ error: error.message, loading: false });
+        set({ error: error.message });
       } else {
-        set({ session: null, user: null, loading: false });
+        set({ session: null, user: null });
       }
     } catch (e) {
       set({
         error: e instanceof Error ? e.message : "退出登录过程中发生未知错误",
-        loading: false,
       });
+    } finally {
+      set({ loading: false });
     }
   },
 
   initialize: async () => {
-    // 开发环境直接模拟已登录状态
-    // if (import.meta.env.DEV) {
-    //   const mockUser: UserProfile = {
-    //     id: "dev-user-id",
-    //     email: "dev@example.com",
-    //     name: "Developer",
-    //     avatar_url: "https://github.com/shadcn.png",
-    //     user_name: "dev_user",
-    //   };
-
-    //   // 构造一个模拟的 Session 对象
-    //   const mockSession = {
-    //     access_token: "mock-token",
-    //     refresh_token: "mock-refresh-token",
-    //     expires_in: 3600,
-    //     token_type: "bearer",
-    //     user: {
-    //       id: mockUser.id,
-    //       app_metadata: {},
-    //       user_metadata: {
-    //         full_name: mockUser.name,
-    //         avatar_url: mockUser.avatar_url,
-    //         preferred_username: mockUser.user_name,
-    //       },
-    //       aud: "authenticated",
-    //       created_at: new Date().toISOString(),
-    //     } as User,
-    //   } as Session;
-
-    //   set({
-    //     session: mockSession,
-    //     user: mockUser,
-    //     isInitializing: false,
-    //   });
-    //   return;
-    // }
-
     ensureAuthCallbackListener({
       onError: (message) => set({ error: message }),
     });
@@ -176,19 +142,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const { session, error } = await getSession();
       if (error) {
-        set({ error: error.message, isInitializing: false });
+        set({ error: error.message });
       } else {
         set({
           session,
           user: extractUserProfile(session?.user ?? null),
-          isInitializing: false,
         });
       }
     } catch (e) {
       set({
         error: e instanceof Error ? e.message : "初始化 Session 失败",
-        isInitializing: false,
       });
+    } finally {
+      set({ isInitializing: false });
     }
 
     // 2. 监听 Auth 状态变化
@@ -220,20 +186,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       if (error) {
-        set({ loading: false, error: error.message });
+        set({ error: error.message });
         return error.message;
       }
 
       const nextLocal = extractUserProfile(data.user ?? null);
       set({
         user: nextLocal,
-        loading: false,
       });
       return null;
     } catch (e) {
       const message = e instanceof Error ? e.message : "更新账号信息失败";
-      set({ loading: false, error: message });
+      set({ error: message });
       return message;
+    } finally {
+      set({ loading: false });
     }
   },
 }));
