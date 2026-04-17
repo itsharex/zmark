@@ -1,10 +1,12 @@
 import { openUrl } from "@tauri-apps/plugin-opener";
+import type { Editor } from "@tiptap/core";
 import { toast } from "sonner";
 import { handleImageUpload } from "@/utils";
 import { to } from "@/utils/error-handler";
 
 export function useEditorEvents() {
   return {
+    // biome-ignore lint/suspicious/noExplicitAny: <tiptap 类型就是any 所以项目也不限制了>
     click: (_: any, event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const anchor = target.closest("a");
@@ -29,7 +31,7 @@ export function useEditorEvents() {
       }
       return false;
     },
-    paste: (view: any, event: ClipboardEvent) => {
+    paste: (view: Editor["view"], event: ClipboardEvent) => {
       const items = Array.from(event.clipboardData?.items || []);
       const imageItem = items.find((item) => item.type.startsWith("image/"));
 

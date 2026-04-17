@@ -88,8 +88,7 @@ export function CollabSidebar({
                 {sortedFiles.map((file) => {
                   const isActive = activeCollabId === file.id;
                   return (
-                    // biome-ignore lint/a11y/useSemanticElements: ignore
-                    <div
+                    <button
                       key={file.id}
                       className={`group flex items-center justify-between p-2 rounded-lg text-sm cursor-pointer ${
                         isActive
@@ -100,7 +99,7 @@ export function CollabSidebar({
                       onKeyDown={(e) => {
                         if (e.key === "Enter") setActiveCollabId(file.id);
                       }}
-                      role="button"
+                      type="button"
                       tabIndex={0}
                     >
                       <div className="flex items-center gap-2 min-w-0">
@@ -148,7 +147,7 @@ export function CollabSidebar({
                           </TooltipContent>
                         </Tooltip>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
                 {files.length === 0 && (

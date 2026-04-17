@@ -15,6 +15,7 @@ export async function to<T, U = Error>(
   try {
     const data = await promise;
     return [null, data];
+    // biome-ignore lint/suspicious/noExplicitAny: <Catch 子句类型必须为 any 或者 unknown>
   } catch (err: any) {
     if (errorExt) {
       Object.assign(err, errorExt);
@@ -33,6 +34,7 @@ export function toSync<T, U = Error>(
   try {
     const data = fn();
     return [null, data];
+    // biome-ignore lint/suspicious/noExplicitAny: <Catch 子句类型必须为 any 或者 unknown>
   } catch (err: any) {
     if (errorExt) {
       Object.assign(err, errorExt);
@@ -44,7 +46,7 @@ export function toSync<T, U = Error>(
 /**
  * 安全执行同步或异步函数，自动捕获错误并返回 [error, data] 元组
  */
-export function safeExecute<T, Args extends any[]>(
+export function safeExecute<T, Args extends unknown[]>(
   fn: (...args: Args) => Promise<T> | T,
   onError?: (err: Error) => void,
 ) {
@@ -52,7 +54,7 @@ export function safeExecute<T, Args extends any[]>(
     try {
       const result = await fn(...args);
       return [null, result];
-    } catch (err: any) {
+    } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
       if (onError) onError(error);
       return [error, undefined];
@@ -76,7 +78,7 @@ interface UseAsyncActionOptions<T> {
  *   errorMessage: "保存失败"
  * });
  */
-export function useAsyncAction<T, Args extends any[]>(
+export function useAsyncAction<T, Args extends unknown[]>(
   action: (...args: Args) => Promise<T>,
   options: UseAsyncActionOptions<T> = {},
 ) {

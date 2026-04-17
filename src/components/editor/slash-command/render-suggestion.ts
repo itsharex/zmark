@@ -1,6 +1,10 @@
 import { ReactRenderer } from "@tiptap/react";
 import type { SuggestionProps } from "@tiptap/suggestion";
-import tippy, { type Instance, type Props } from "tippy.js";
+import tippy, {
+  type GetReferenceClientRect,
+  type Instance,
+  type Props,
+} from "tippy.js";
 import { SuggestionList } from "./suggestion-list";
 import type { SuggestionListRef } from "./type";
 
@@ -23,8 +27,7 @@ export const renderItems = () => {
       }
 
       popup = tippy("body", {
-        // biome-ignore lint/suspicious/noExplicitAny: <Tiptap 提供的 clientRect 返回值类型与 Tippy 要求的 DOMRect 略有不匹配，这种情况下使用断言是目前最稳妥的处理方式>
-        getReferenceClientRect: props.clientRect as any,
+        getReferenceClientRect: props.clientRect as GetReferenceClientRect,
         appendTo: () => document.body,
         content: component.element,
         showOnCreate: true,
@@ -45,8 +48,7 @@ export const renderItems = () => {
       }
 
       popup?.[0].setProps({
-        // biome-ignore lint/suspicious/noExplicitAny: <Tiptap 提供的 clientRect 返回值类型与 Tippy 要求的 DOMRect 略有不匹配，这种情况下使用断言是目前最稳妥的处理方式>
-        getReferenceClientRect: props.clientRect as any,
+        getReferenceClientRect: props.clientRect as GetReferenceClientRect,
       });
     },
 

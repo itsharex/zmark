@@ -118,9 +118,8 @@ export const ChatPanel = () => {
     });
   }, []);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <messages变化说明AI还在输出，需要滚动到底部>
   useEffect(() => {
-    if (scrollRef.current) {
+    if (messages && scrollRef.current) {
       const scrollContainer = scrollRef.current.querySelector(
         "[data-radix-scroll-area-viewport]",
       );
