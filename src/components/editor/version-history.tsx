@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { to, toSync } from "@/utils/error-handler";
 import {
   type GitCommitVersion,
   getGitVersionContent,
@@ -168,10 +169,10 @@ export const VersionHistory = ({
       setDiffResult(null);
       setStats(null);
 
-      try {
-        const commits = await getGitVersions(curPath);
-        if (cancelled) return;
+      const [err, commits] = await to(getGitVersions(curPath));
+      if (cancelled) return;
 
+      if (!err && commits) {
         setSource("git");
         setGitVersions(commits);
 
@@ -185,9 +186,7 @@ export const VersionHistory = ({
           setNewVersionId("");
           setOldVersionId("");
         }
-      } catch (_error) {
-        if (cancelled) return;
-
+      } else {
         const loaded = getVersions(curPath);
         setSource("local");
         setLocalVersions(loaded);
@@ -202,9 +201,8 @@ export const VersionHistory = ({
           setNewVersionId("");
           setOldVersionId("");
         }
-      } finally {
-        if (!cancelled) setIsLoading(false);
       }
+      setIsLoading(false);
     };
 
     load();
@@ -215,9 +213,19 @@ export const VersionHistory = ({
 
   const handleSaveVersion = () => {
     if (source !== "local") return;
-    try {
+
+    const [err, newVer] = toSync(() => {
       const content = getContent();
-      const newVer = saveVersion(curPath, content);
+      return saveVersion(curPath, content);
+    });
+
+    if (err) {
+      console.error(err);
+      toast.error("保存版本失败");
+      return;
+    }
+
+    if (newVer) {
       const newVersions = [newVer, ...localVersions];
       setLocalVersions(newVersions);
       setNewVersionId(newVer.id);
@@ -227,9 +235,6 @@ export const VersionHistory = ({
         setOldVersionId(newVer.id);
       }
       toast.success("版本保存成功");
-    } catch (error) {
-      console.error(error);
-      toast.error("保存版本失败");
     }
   };
 
@@ -239,32 +244,44 @@ export const VersionHistory = ({
       return;
     }
 
-    try {
-      let oldLines: string[] = [];
-      let newLines: string[] = [];
+    let oldLines: string[] = [];
+    let newLines: string[] = [];
 
-      if (source === "git") {
-        const [oldText, newText] = await Promise.all([
+    if (source === "git") {
+      const [err, contents] = await to(
+        Promise.all([
           getGitVersionContent(curPath, oldVersionId),
           getGitVersionContent(curPath, newVersionId),
-        ]);
-        oldLines = oldText.split("\n");
-        newLines = newText.split("\n");
-      } else {
-        const oldData = localVersions.find((v) => v.id === oldVersionId);
-        const newData = localVersions.find((v) => v.id === newVersionId);
+        ]),
+      );
+      if (err || !contents) {
+        toast.error("获取 Git 版本内容失败");
+        return;
+      }
+      const [oldText, newText] = contents;
+      oldLines = oldText.split("\n");
+      newLines = newText.split("\n");
+    } else {
+      const oldData = localVersions.find((v) => v.id === oldVersionId);
+      const newData = localVersions.find((v) => v.id === newVersionId);
 
-        if (!oldData || !newData) {
-          toast.error("请选择两个版本进行对比");
-          return;
-        }
-
-        oldLines = oldData.content;
-        newLines = newData.content;
+      if (!oldData || !newData) {
+        toast.error("请选择两个版本进行对比");
+        return;
       }
 
-      const diff = computeDiff(oldLines, newLines);
+      oldLines = oldData.content;
+      newLines = newData.content;
+    }
 
+    const [diffErr, diff] = toSync(() => computeDiff(oldLines, newLines));
+    if (diffErr) {
+      console.error(diffErr);
+      toast.error("对比计算失败");
+      return;
+    }
+
+    if (diff) {
       let addCount = 0;
       let delCount = 0;
       let sameCount = 0;
@@ -281,9 +298,6 @@ export const VersionHistory = ({
 
       setDiffResult(diff);
       setStats({ add: addCount, del: delCount, same: sameCount });
-    } catch (error) {
-      console.error(error);
-      toast.error(source === "git" ? "获取 Git 版本失败" : "生成对比失败");
     }
   };
 

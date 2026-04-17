@@ -11,6 +11,7 @@ import type {
   KnowledgeBase,
   ThinkingProcess,
 } from "@/types/kb";
+import { to } from "@/utils/error-handler";
 
 const defaultApiKey = import.meta.env.VITE_SILICONFLOW_API_KEY?.trim() || "";
 const hasEnvApiKeyConfigured = defaultApiKey.length > 0;
@@ -124,67 +125,76 @@ export const useKbStore = create<KbState>()(
       },
 
       fetchKnowledgeBases: async () => {
-        try {
-          const kbs = await invoke<KnowledgeBase[]>("list_knowledge_bases");
+        const [err, kbs] = await to(
+          invoke<KnowledgeBase[]>("list_knowledge_bases"),
+        );
+        if (err) {
+          console.error("Failed to fetch knowledge bases:", err);
+        } else {
           set({ knowledgeBases: kbs });
-        } catch (error) {
-          console.error("Failed to fetch knowledge bases:", error);
         }
       },
 
       fetchDocuments: async (kbId) => {
-        try {
-          const docs = await invoke<Document[]>("list_documents", { kbId });
+        const [err, docs] = await to(
+          invoke<Document[]>("list_documents", { kbId }),
+        );
+        if (err) {
+          console.error("Failed to fetch documents:", err);
+        } else {
           set({ documents: docs });
-        } catch (error) {
-          console.error("Failed to fetch documents:", error);
         }
       },
 
       createKnowledgeBase: async (name) => {
-        try {
-          const newKb = await invoke<KnowledgeBase>("create_knowledge_base", {
+        const [err, newKb] = await to(
+          invoke<KnowledgeBase>("create_knowledge_base", {
             name,
-          });
+          }),
+        );
+        if (err) {
+          console.error("Failed to create knowledge base:", err);
+          throw err;
+        }
+        if (newKb) {
           set((state) => ({
             knowledgeBases: [newKb, ...state.knowledgeBases],
             currentKbId: state.currentKbId || newKb.id,
           }));
-        } catch (error) {
-          console.error("Failed to create knowledge base:", error);
-          throw error;
         }
       },
 
       addDocument: async (kbId, filename, content) => {
-        try {
-          const { apiKey } = get();
-          if (!apiKey) throw new Error("API Key is required");
-          const newDoc = await invoke<Document>("add_document", {
+        const { apiKey } = get();
+        if (!apiKey) throw new Error("API Key is required");
+        const [err, newDoc] = await to(
+          invoke<Document>("add_document", {
             kbId,
             filename,
             content,
             apiKey,
-          });
+          }),
+        );
+        if (err) {
+          console.error("Failed to add document:", err);
+          throw err;
+        }
+        if (newDoc) {
           set((state) => ({
             documents: [newDoc, ...state.documents],
           }));
-        } catch (error) {
-          console.error("Failed to add document:", error);
-          throw error;
         }
       },
 
       deleteDocument: async (docId) => {
-        try {
-          await invoke("delete_document", { docId });
-          set((state) => ({
-            documents: state.documents.filter((d) => d.id !== docId),
-          }));
-        } catch (error) {
-          console.error("Failed to delete document:", error);
-          throw error;
+        const [err] = await to(invoke("delete_document", { docId }));
+        if (err) {
+          console.error("Failed to delete document:", err);
+          throw err;
         }
+        set((state) => ({
+          documents: state.documents.filter((d) => d.id !== docId),
+        }));
       },
 
       createConversation: () => {
@@ -305,7 +315,7 @@ export const useKbStore = create<KbState>()(
           unlistenDone?.();
         };
 
-        try {
+        const setupListenersAndChat = async () => {
           unlistenThinking = await listen<ThinkingProcess>(
             "chat-thinking",
             (event) => {
@@ -372,11 +382,14 @@ export const useKbStore = create<KbState>()(
             apiKey,
             history,
           });
-        } catch (error) {
-          console.error("Chat failed:", error);
+        };
+
+        const [err] = await to(setupListenersAndChat());
+        if (err) {
+          console.error("Chat failed:", err);
           set({ isStreaming: false });
           cleanupListeners();
-          throw error;
+          throw err;
         }
       },
 

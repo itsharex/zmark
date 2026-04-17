@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useKbStore } from "@/stores";
 import type { Document, KnowledgeBase } from "@/types/kb";
+import { to } from "@/utils/error-handler";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import {
@@ -78,40 +79,47 @@ export function KbSidebar({
 
   const handleCreateKb = async () => {
     if (!newKbName.trim()) return;
-    try {
-      await createKnowledgeBase(newKbName);
+    const [err] = await to(createKnowledgeBase(newKbName));
+    if (err) {
+      toast.error(`创建失败: ${err}`);
+    } else {
       setNewKbName("");
       toast.success("知识库创建成功");
-    } catch (error) {
-      toast.error(`创建失败: ${error}`);
-    } finally {
-      setIsCreating(false);
     }
+    setIsCreating(false);
   };
 
   const handleAddDocument = async () => {
     if (!currentKbId) return;
-    try {
-      const selected = await open({
+    const [openErr, selected] = await to(
+      open({
         multiple: true,
         filters: [{ name: "Markdown", extensions: ["md"] }],
-      });
+      }),
+    );
 
-      if (!selected || !Array.isArray(selected)) return;
+    if (openErr) {
+      toast.error(`文件选择失败: ${openErr}`);
+      return;
+    }
 
-      for (const filePath of selected) {
-        const filename = getDisplayFilename(filePath);
-        const loadingToast = toast.loading(`正在处理 ${filename}...`);
-        try {
-          const text = await readTextFile(filePath);
-          await addDocument(currentKbId, filename, text);
-          toast.success(`${filename} 添加成功`, { id: loadingToast });
-        } catch (error) {
-          toast.error(`${filename} 添加失败: ${error}`, { id: loadingToast });
-        }
+    if (!selected || !Array.isArray(selected)) return;
+
+    for (const filePath of selected) {
+      const filename = getDisplayFilename(filePath);
+      const loadingToast = toast.loading(`正在处理 ${filename}...`);
+
+      const [addErr] = await to(
+        readTextFile(filePath).then((text) =>
+          addDocument(currentKbId, filename, text),
+        ),
+      );
+
+      if (addErr) {
+        toast.error(`${filename} 添加失败: ${addErr}`, { id: loadingToast });
+      } else {
+        toast.success(`${filename} 添加成功`, { id: loadingToast });
       }
-    } catch (error) {
-      toast.error(`文件选择失败: ${error}`);
     }
   };
 

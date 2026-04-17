@@ -1,5 +1,6 @@
 import type { SearchResult } from "minisearch";
 import type { FileContent, SearchAction, SearchResponse } from "@/types/search";
+import { safeExecute } from "@/utils/error-handler";
 import SearchWorker from "./search.worker?worker";
 
 // 创建 Worker 实例
@@ -48,13 +49,12 @@ export function subscribeToSearch(listener: SearchListener) {
 }
 
 function notifyListeners() {
-  [...listeners].forEach((listener) => {
-    try {
-      listener();
-    } catch (error) {
-      console.error("Error in search listener:", error);
-    }
-  });
+  [...listeners].forEach(
+    safeExecute(
+      async (listener) => listener(),
+      (error) => console.error("Error in search listener:", error),
+    ),
+  );
 }
 
 export function indexFiles(files: FileContent[]) {

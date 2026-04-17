@@ -1,5 +1,6 @@
 import MiniSearch from "minisearch";
 import type { SearchAction, SearchResponse } from "@/types/search";
+import { safeExecute } from "@/utils/error-handler";
 
 const miniSearch = new MiniSearch({
   fields: ["title", "content"], // fields to index for full-text search
@@ -12,10 +13,10 @@ const miniSearch = new MiniSearch({
   idField: "path", // use file path as unique ID
 });
 
-self.onmessage = (e: MessageEvent<SearchAction>) => {
-  const action = e.data;
+self.onmessage = safeExecute(
+  async (e: MessageEvent<SearchAction>) => {
+    const action = e.data;
 
-  try {
     switch (action.type) {
       case "INDEX_FILES": {
         miniSearch.removeAll();
@@ -72,10 +73,11 @@ self.onmessage = (e: MessageEvent<SearchAction>) => {
         break;
       }
     }
-  } catch (error) {
+  },
+  (error) => {
     self.postMessage({
       type: "ERROR",
       payload: error instanceof Error ? error.message : String(error),
     } as SearchResponse);
-  }
-};
+  },
+);

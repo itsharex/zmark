@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/command";
 import { useEditorStore, useSearchStore } from "@/stores";
 import { resolveMarkdownImages, search, subscribeToSearch } from "@/utils";
+import { to } from "@/utils/error-handler";
 
 export function SearchCommand() {
   const { isOpen, setIsOpen, toggle } = useSearchStore();
@@ -57,14 +58,20 @@ export function SearchCommand() {
   }, [query]);
 
   const handleSelect = async (path: string) => {
-    try {
-      const content = await readTextFile(path);
-      const resolvedContent = await resolveMarkdownImages(content, path);
+    const [err, resolvedContent] = await to(
+      readTextFile(path).then((content) =>
+        resolveMarkdownImages(content, path),
+      ),
+    );
+    if (err) {
+      console.error("Failed to read file:", err);
+      return;
+    }
+
+    if (resolvedContent !== undefined) {
       setContent(resolvedContent);
       setCurPath(path);
       setIsOpen(false);
-    } catch (error) {
-      console.error("Failed to read file:", error);
     }
   };
 

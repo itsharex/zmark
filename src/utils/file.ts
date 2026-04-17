@@ -18,6 +18,7 @@ import {
 import { useEditorStore } from "@/stores/editor";
 import type { TreeItem } from "@/types/editor";
 import type { FileContent } from "@/types/search";
+import { to } from "@/utils/error-handler";
 import {
   addOrUpdateFile,
   removeFile as removeSearchIndex,
@@ -28,15 +29,12 @@ import {
  */
 export async function getDataDir() {
   // 尝试创建 markdowns 目录，如果已存在则忽略错误
-  try {
-    await mkdir("markdowns", {
+  await to(
+    mkdir("markdowns", {
       baseDir: BaseDirectory.Document,
       recursive: true,
-    });
-  } catch (_error) {
-    // 如果目录已存在，忽略错误
-    console.error("error", _error);
-  }
+    }),
+  );
   // 无论是否创建成功，都返回完整的路径
   return join(await documentDir(), "markdowns");
 }
@@ -72,13 +70,12 @@ export function getTreeKey(item: TreeItem) {
 }
 
 export async function isDir(path: string) {
-  try {
-    const fileStat = await stat(path);
-    return fileStat.isDirectory;
-  } catch (error) {
-    console.error("Error checking if path is directory:", error);
+  const [err, fileStat] = await to(stat(path));
+  if (err) {
+    console.error("Error checking if path is directory:", err);
     return false;
   }
+  return fileStat?.isDirectory ?? false;
 }
 
 export async function createFile(filePath: string, basePath?: string) {
@@ -177,15 +174,15 @@ async function readAllMarkdownFiles(dirPath: string): Promise<FileContent[]> {
     const fullPath = await join(dirPath, name);
 
     if (entry.isFile && name.endsWith(".md")) {
-      try {
-        const content = await readTextFile(fullPath);
+      const [err, content] = await to(readTextFile(fullPath));
+      if (err) {
+        console.error(`Failed to read file ${fullPath}`, err);
+      } else if (content !== undefined) {
         files.push({
           path: fullPath,
           name: name,
           content: content,
         });
-      } catch (e) {
-        console.error(`Failed to read file ${fullPath}`, e);
       }
     } else if (entry.isDirectory) {
       const subFiles = await readAllMarkdownFiles(fullPath);
@@ -226,16 +223,23 @@ export async function resolveMarkdownImages(
       continue;
     }
 
-    try {
-      // 解析相对路径为绝对路径
-      const absolutePath = await join(docDir, src);
-      // 检查文件是否存在
-      if (await exists(absolutePath)) {
-        const assetUrl = convertFileSrc(absolutePath);
-        result = result.replace(fullMatch, `![${alt}](${assetUrl})`);
-      }
-    } catch (e) {
-      console.error(`Failed to resolve image path: ${src}`, e);
+    // 解析相对路径为绝对路径
+    const [err, absolutePath] = await to(join(docDir, src));
+    if (err) {
+      console.error(`Failed to resolve image path: ${src}`, err);
+      continue;
+    }
+
+    // 检查文件是否存在
+    const [existErr, isExist] = await to(exists(absolutePath as string));
+    if (existErr) {
+      console.error(`Failed to check image existence: ${src}`, existErr);
+      continue;
+    }
+
+    if (isExist) {
+      const assetUrl = convertFileSrc(absolutePath as string);
+      result = result.replace(fullMatch, `![${alt}](${assetUrl})`);
     }
   }
 
@@ -284,21 +288,16 @@ export async function unresolveMarkdownImages(
     let absolutePath = "";
 
     if (src.startsWith("asset://")) {
-      try {
-        const url = new URL(src);
-        // decodeURIComponent(url.pathname) 可能会包含前导斜杠
-        absolutePath = decodeURIComponent(url.pathname);
-        // 在 macOS 上，absolutePath 如果以 /Users/... 开头，则它是绝对路径
-        // 在 Windows 上，absolutePath 如果以 /C:/... 开头，需要去掉前面的 /
-        if (
-          absolutePath.match(/^\/[a-zA-Z]:\//) ||
-          absolutePath.match(/^\/[a-zA-Z]:\\/)
-        ) {
-          absolutePath = absolutePath.substring(1);
-        }
-      } catch (e) {
-        console.error(`Failed to parse asset URL: ${src}`, e);
-        continue;
+      const url = new URL(src);
+      // decodeURIComponent(url.pathname) 可能会包含前导斜杠
+      absolutePath = decodeURIComponent(url.pathname);
+      // 在 macOS 上，absolutePath 如果以 /Users/... 开头，则它是绝对路径
+      // 在 Windows 上，absolutePath 如果以 /C:/... 开头，需要去掉前面的 /
+      if (
+        absolutePath.match(/^\/[a-zA-Z]:\//) ||
+        absolutePath.match(/^\/[a-zA-Z]:\\/)
+      ) {
+        absolutePath = absolutePath.substring(1);
       }
     } else if (
       src.startsWith("/") ||
@@ -312,16 +311,12 @@ export async function unresolveMarkdownImages(
     }
 
     if (absolutePath) {
-      try {
-        // 计算从文档目录到图片目录的相对路径
-        const relPath = getRelativePath(docDir, absolutePath);
-        // 确保使用正斜杠
-        const webRelPath = relPath.replace(/\\/g, "/");
+      // 计算从文档目录到图片目录的相对路径
+      const relPath = getRelativePath(docDir, absolutePath);
+      // 确保使用正斜杠
+      const webRelPath = relPath.replace(/\\/g, "/");
 
-        result = result.replace(fullMatch, `![${alt}](${webRelPath})`);
-      } catch (e) {
-        console.error(`Failed to unresolve image path: ${absolutePath}`, e);
-      }
+      result = result.replace(fullMatch, `![${alt}](${webRelPath})`);
     }
   }
 
@@ -329,53 +324,53 @@ export async function unresolveMarkdownImages(
 }
 
 export async function deleteFileOrDir(path: string) {
-  try {
-    const isDirectory = await isDir(path);
-    await remove(path, { recursive: true });
+  const isDirectory = await isDir(path);
+  const [err] = await to(remove(path, { recursive: true }));
 
-    if (!isDirectory) {
-      removeSearchIndex(path);
-    }
-    return true;
-  } catch (error) {
-    console.error("Failed to delete:", error);
-    throw error;
+  if (err) {
+    console.error("Failed to delete:", err);
+    throw err;
   }
+
+  if (!isDirectory) {
+    removeSearchIndex(path);
+  }
+  return true;
 }
 
 export async function renameFileOrDir(oldPath: string, newName: string) {
-  try {
-    const parentDir = await dirname(oldPath);
-    const newPath = await join(parentDir, newName);
+  const parentDir = await dirname(oldPath);
+  const newPath = await join(parentDir, newName);
 
-    if (await exists(newPath)) {
-      throw new Error("Target file already exists");
-    }
-
-    await rename(oldPath, newPath);
-
-    // Simple approach: remove old path from index
-    // Re-indexing will happen when user opens/saves the new file.
-    removeSearchIndex(oldPath);
-
-    // If it's a file, read content and add to index immediately
-    const isFile = !(await isDir(newPath));
-    if (isFile) {
-      try {
-        const content = await readTextFile(newPath);
-        addOrUpdateFile({
-          path: newPath,
-          name: newName,
-          content: content,
-        });
-      } catch (e) {
-        console.error("Failed to re-index renamed file:", e);
-      }
-    }
-
-    return newPath;
-  } catch (error) {
-    console.error("Failed to rename:", error);
-    throw error;
+  const isExists = await exists(newPath);
+  if (isExists) {
+    throw new Error("Target file already exists");
   }
+
+  const [renameErr] = await to(rename(oldPath, newPath));
+  if (renameErr) {
+    console.error("Failed to rename:", renameErr);
+    throw renameErr;
+  }
+
+  // Simple approach: remove old path from index
+  // Re-indexing will happen when user opens/saves the new file.
+  removeSearchIndex(oldPath);
+
+  // If it's a file, read content and add to index immediately
+  const isFile = !(await isDir(newPath));
+  if (isFile) {
+    const [readErr, content] = await to(readTextFile(newPath));
+    if (readErr) {
+      console.error("Failed to re-index renamed file:", readErr);
+    } else if (content !== undefined) {
+      addOrUpdateFile({
+        path: newPath,
+        name: newName,
+        content: content,
+      });
+    }
+  }
+
+  return newPath;
 }

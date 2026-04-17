@@ -7,6 +7,7 @@ import {
   logoutFromGitHub,
   sendLoginMagicLink,
 } from "../utils/auth";
+import { to } from "../utils/error-handler";
 import { supabase } from "../utils/supabase-client";
 
 export interface UserProfile {
@@ -74,63 +75,65 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   login: async () => {
     set({ loading: true, error: null });
-    try {
-      const { error } = await loginWithGitHub();
-      if (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        set({ error: message });
-        return message;
-      }
-      return null;
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "登录过程中发生未知错误";
+    const [err, res] = await to(loginWithGitHub());
+
+    set({ loading: false });
+
+    if (err) {
+      const message = err.message || "登录过程中发生未知错误";
       set({ error: message });
       return message;
-    } finally {
-      set({ loading: false });
     }
+
+    if (res?.error) {
+      const message =
+        res.error instanceof Error ? res.error.message : String(res.error);
+      set({ error: message });
+      return message;
+    }
+
+    return null;
   },
 
   sendLoginMagicLink: async (email) => {
     set({ loading: true, error: null });
-    try {
-      const { error } = await sendLoginMagicLink(email);
-      if (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        set({ error: message });
-        return message;
-      }
-      return null;
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "发送登录链接失败";
+    const [err, res] = await to(sendLoginMagicLink(email));
+
+    set({ loading: false });
+
+    if (err) {
+      const message = err.message || "发送登录链接失败";
       set({ error: message });
       return message;
-    } finally {
-      set({ loading: false });
     }
+
+    if (res?.error) {
+      const message =
+        res.error instanceof Error ? res.error.message : String(res.error);
+      set({ error: message });
+      return message;
+    }
+
+    return null;
   },
 
   logout: async () => {
-    // 开发环境模拟登出
-    // if (import.meta.env.DEV) {
-    //   return;
-    // }
-
     set({ loading: true, error: null });
-    try {
-      const { error } = await logoutFromGitHub();
-      if (error) {
-        set({ error: error.message });
-      } else {
-        set({ session: null, user: null });
-      }
-    } catch (e) {
-      set({
-        error: e instanceof Error ? e.message : "退出登录过程中发生未知错误",
-      });
-    } finally {
-      set({ loading: false });
+    const [err, res] = await to(logoutFromGitHub());
+
+    set({ loading: false });
+
+    if (err) {
+      set({ error: err.message || "退出登录过程中发生未知错误" });
+      return;
     }
+
+    if (res?.error) {
+      set({ error: res.error.message });
+      return;
+    }
+
+    set({ session: null, user: null });
   },
 
   initialize: async () => {
@@ -139,22 +142,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
 
     // 1. 获取初始 Session
-    try {
-      const { session, error } = await getSession();
-      if (error) {
-        set({ error: error.message });
-      } else {
-        set({
-          session,
-          user: extractUserProfile(session?.user ?? null),
-        });
-      }
-    } catch (e) {
+    const [err, res] = await to(getSession());
+
+    set({ isInitializing: false });
+
+    if (err) {
+      set({ error: err.message || "初始化 Session 失败" });
+    } else if (res?.error) {
+      set({ error: res.error.message });
+    } else {
       set({
-        error: e instanceof Error ? e.message : "初始化 Session 失败",
+        session: res?.session || null,
+        user: extractUserProfile(res?.session?.user ?? null),
       });
-    } finally {
-      set({ isInitializing: false });
     }
 
     // 2. 监听 Auth 状态变化
@@ -171,36 +171,39 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (!currentUser) return "未登录";
 
     set({ loading: true, error: null });
-    try {
-      const dataPayload: Record<string, string | null> = {};
-      if ("name" in input)
-        dataPayload.zmark_name = normalizeOptionalString(input.name);
-      if ("avatar_url" in input)
-        dataPayload.zmark_avatar_url = normalizeOptionalString(
-          input.avatar_url,
-        );
 
-      const hasData = Object.keys(dataPayload).length > 0;
-      const { data, error } = await supabase.auth.updateUser({
+    const dataPayload: Record<string, string | null> = {};
+    if ("name" in input)
+      dataPayload.zmark_name = normalizeOptionalString(input.name);
+    if ("avatar_url" in input)
+      dataPayload.zmark_avatar_url = normalizeOptionalString(input.avatar_url);
+
+    const hasData = Object.keys(dataPayload).length > 0;
+    const [err, res] = await to(
+      supabase.auth.updateUser({
         ...(hasData ? { data: dataPayload } : {}),
-      });
+      }),
+    );
 
-      if (error) {
-        set({ error: error.message });
-        return error.message;
-      }
+    set({ loading: false });
 
-      const nextLocal = extractUserProfile(data.user ?? null);
+    if (err) {
+      const message = err.message || "更新账号信息失败";
+      set({ error: message });
+      return message;
+    }
+
+    if (res?.error) {
+      set({ error: res.error.message });
+      return res.error.message;
+    }
+
+    if (res?.data) {
+      const nextLocal = extractUserProfile(res.data.user ?? null);
       set({
         user: nextLocal,
       });
-      return null;
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "更新账号信息失败";
-      set({ error: message });
-      return message;
-    } finally {
-      set({ loading: false });
     }
+    return null;
   },
 }));

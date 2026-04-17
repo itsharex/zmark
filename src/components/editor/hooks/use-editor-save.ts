@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import type { CollabFile } from "@/stores/collab";
 import type { EditorStorage } from "@/types/editor";
 import { addOrUpdateFile, unresolveMarkdownImages } from "@/utils";
+import { to } from "@/utils/error-handler";
 
 interface UseEditorSaveProps {
   editor: Editor | null;
@@ -27,34 +28,48 @@ export function useEditorSave({
 
     if (collabId && currentFile) {
       // 协作模式且没有关联本地文件：调用 Tauri 的另存为对话框
-      try {
-        const filePath = await save({
+      const [dialogErr, filePath] = await to(
+        save({
           filters: [{ name: "Markdown", extensions: ["md"] }],
           defaultPath: `${currentFile.name}.md`,
-        });
+        }),
+      );
 
-        if (filePath) {
-          const unresolvedMarkdown = await unresolveMarkdownImages(
-            markdown,
-            filePath,
-          );
-          await writeTextFile(filePath, unresolvedMarkdown);
-          toast.success("协作文档已保存到本地");
+      if (dialogErr) {
+        console.error("Save dialog failed:", dialogErr);
+        toast.error("弹出保存对话框失败");
+        return;
+      }
+
+      if (filePath) {
+        const [writeErr] = await to(
+          unresolveMarkdownImages(markdown, filePath).then((unresolved) =>
+            writeTextFile(filePath, unresolved),
+          ),
+        );
+
+        if (writeErr) {
+          toast.error("写入文件失败");
+          return;
         }
-      } catch (err) {
-        console.error("Save dialog failed:", err);
-        toast.error("保存失败");
+
+        toast.success("协作文档已保存到本地");
       }
       return;
     }
 
     if (curPath) {
       // 单机模式或已关联本地文件的保存逻辑
-      const unresolvedMarkdown = await unresolveMarkdownImages(
-        markdown,
-        curPath,
+      const [writeErr, unresolvedMarkdown] = await to(
+        unresolveMarkdownImages(markdown, curPath).then((unresolved) =>
+          writeTextFile(curPath, unresolved).then(() => unresolved),
+        ),
       );
-      await writeTextFile(curPath, unresolvedMarkdown);
+
+      if (writeErr) {
+        toast.error("保存失败");
+        return;
+      }
 
       addOrUpdateFile({
         path: curPath,

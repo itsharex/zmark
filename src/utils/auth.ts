@@ -2,6 +2,7 @@ import type { AuthError, Session } from "@supabase/supabase-js";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
 import { open } from "@tauri-apps/plugin-shell";
+import { to } from "./error-handler";
 import { supabase } from "./supabase-client";
 
 export interface AuthResult {
@@ -29,36 +30,35 @@ export function ensureAuthCallbackListener(options?: {
   const handleUrl = async (url: string) => {
     if (!url.startsWith("zmark://")) return;
 
-    try {
-      const urlObj = new URL(url);
-      const code = urlObj.searchParams.get("code");
-      const errorParam = urlObj.searchParams.get("error");
-      const errorDescription = urlObj.searchParams.get("error_description");
+    const urlObj = new URL(url);
+    const code = urlObj.searchParams.get("code");
+    const errorParam = urlObj.searchParams.get("error");
+    const errorDescription = urlObj.searchParams.get("error_description");
 
-      if (errorParam || errorDescription) {
-        handleError(
-          `认证出错：${decodeURIComponent(errorDescription || errorParam || "未知错误")}`,
-        );
-        return;
-      }
-
-      if (!code) return;
-      if (processedAuthCodes.has(code)) return;
-      processedAuthCodes.add(code);
-
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
-      if (error) {
-        handleError(`换取 Session 失败：${error.message}`);
-      }
-    } catch (e) {
+    if (errorParam || errorDescription) {
       handleError(
-        e instanceof Error ? e.message : "处理回调 URL 时发生未知错误",
+        `认证出错：${decodeURIComponent(errorDescription || errorParam || "未知错误")}`,
       );
+      return;
+    }
+
+    if (!code) return;
+    if (processedAuthCodes.has(code)) return;
+    processedAuthCodes.add(code);
+
+    const [err, res] = await to(supabase.auth.exchangeCodeForSession(code));
+    if (err) {
+      handleError(err.message || "处理回调 URL 时发生未知错误");
+      return;
+    }
+
+    if (res?.error) {
+      handleError(`换取 Session 失败：${res.error.message}`);
     }
   };
 
   (async () => {
-    try {
+    const setupListeners = async () => {
       unlistenDeepLink = await onOpenUrl((urls) => {
         for (const url of urls) {
           void handleUrl(url);
@@ -68,12 +68,11 @@ export function ensureAuthCallbackListener(options?: {
       unlistenEvent = await listen<string>("deep-link-received", (event) => {
         void handleUrl(event.payload);
       });
-    } catch (e) {
-      handleError(
-        e instanceof Error
-          ? e.message
-          : "设置回调监听失败（可能未运行在 Tauri 环境）",
-      );
+    };
+
+    const [err] = await to(setupListeners());
+    if (err) {
+      handleError(err.message || "设置回调监听失败（可能未运行在 Tauri 环境）");
       isAuthCallbackListenerInstalled = false;
       if (unlistenDeepLink) unlistenDeepLink();
       if (unlistenEvent) unlistenEvent();
@@ -85,54 +84,60 @@ export function ensureAuthCallbackListener(options?: {
  * 启动 GitHub OAuth 登录流程
  */
 export async function loginWithGitHub(): Promise<AuthResult> {
-  try {
-    // 1. 启动 OAuth 流程获取认证 URL
-    const { data, error } = await supabase.auth.signInWithOAuth({
+  const [err, res] = await to(
+    supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
         redirectTo: "zmark://callback",
         skipBrowserRedirect: true,
       },
-    });
+    }),
+  );
 
-    if (error) {
-      console.error("[Auth] 获取认证 URL 失败:", error);
-      return {
-        session: null,
-        error: new Error(`启动登录失败：${error.message}`),
-      };
-    }
-
-    if (!data.url) {
-      console.error("[Auth] 未获取到 URL");
-      return { session: null, error: new Error("未能获取到登录 URL") };
-    }
-
-    await open(data.url);
-    return { session: null, error: null };
-  } catch (e) {
-    console.error("[Auth] 登录流程异常:", e);
+  if (err) {
+    console.error("[Auth] 登录流程异常:", err);
     return {
       session: null,
-      error: e instanceof Error ? e : new Error("登录过程中发生未知错误"),
+      error: err instanceof Error ? err : new Error("登录过程中发生未知错误"),
     };
   }
+
+  if (res?.error) {
+    console.error("[Auth] 获取认证 URL 失败:", res.error);
+    return {
+      session: null,
+      error: new Error(`启动登录失败：${res.error.message}`),
+    };
+  }
+
+  if (!res?.data?.url) {
+    console.error("[Auth] 未获取到 URL");
+    return { session: null, error: new Error("未能获取到登录 URL") };
+  }
+
+  await open(res.data.url);
+  return { session: null, error: null };
 }
 
 export async function sendLoginMagicLink(email: string): Promise<{
   error: AuthError | Error | null;
 }> {
-  try {
-    const { error } = await supabase.auth.signInWithOtp({
+  const [err, res] = await to(
+    supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: "zmark://callback",
       },
-    });
-    return { error };
-  } catch (e) {
-    return { error: e instanceof Error ? e : new Error("发送登录链接失败") };
+    }),
+  );
+
+  if (err) {
+    return {
+      error: err instanceof Error ? err : new Error("发送登录链接失败"),
+    };
   }
+
+  return { error: res?.error ?? null };
 }
 
 /**

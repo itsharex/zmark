@@ -2,6 +2,7 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import { useEffect, useState } from "react";
 import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
+import { toSync } from "@/utils/error-handler";
 import { supabase } from "@/utils/supabase-client";
 
 const uint8ToBase64 = (bytes: Uint8Array) => {
@@ -61,11 +62,9 @@ export function useCollaboration(collabId: string | null) {
       const yUpdate = data?.y_update;
       if (!yUpdate) return;
 
-      try {
+      toSync(() => {
         Y.applyUpdate(ydoc, base64ToUint8(yUpdate));
-      } catch {
-        return;
-      }
+      });
     };
 
     restoreFromSupabase();

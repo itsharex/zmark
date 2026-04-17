@@ -25,6 +25,7 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useMenuBar } from "@/hooks";
 import { handleImageUpload } from "@/utils";
+import { to } from "@/utils/error-handler";
 import { HeadingPicker } from "./heading-picker";
 import { HighlightColorPicker } from "./highlight-picker";
 import { LinkPopover } from "./link-popover";
@@ -61,13 +62,13 @@ export const MenuBar = ({
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      try {
-        const url = await handleImageUpload(file);
+      const [err, url] = await to(handleImageUpload(file));
+      if (err) {
+        const errorMessage = err.message || String(err);
+        toast.error(`图片上传失败: ${errorMessage}`);
+      } else if (url) {
         editor.chain().focus().setImage({ src: url }).run();
         toast.success("图片已上传");
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
-        toast.error(`图片上传失败: ${errorMessage}`);
       }
     }
     // 重置 input，方便下次选择同一张图

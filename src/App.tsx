@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { SearchCommand } from "@/components/editor/search-command";
 import { AccountSettingsPage } from "@/components/settings";
 import { getAllMarkdownFiles, indexFiles } from "@/utils";
+import { to } from "@/utils/error-handler";
 import { LoginButton } from "./components/auth/LoginButton";
 import { UserAvatar } from "./components/auth/UserAvatar";
 import { CollabSidebar } from "./components/collab/collab-sidebar";
@@ -44,11 +45,11 @@ const App = () => {
   useEffect(() => {
     // 启动时建立搜索索引
     const buildIndex = async () => {
-      try {
-        const files = await getAllMarkdownFiles();
+      const [err, files] = await to(getAllMarkdownFiles());
+      if (err) {
+        console.error("Failed to build search index:", err);
+      } else if (files) {
         indexFiles(files);
-      } catch (error) {
-        console.error("Failed to build search index:", error);
       }
     };
     buildIndex();

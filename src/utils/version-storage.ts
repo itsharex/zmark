@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { toSync } from "@/utils/error-handler";
 
 export interface Version {
   id: string;
@@ -21,16 +22,16 @@ const STORAGE_PREFIX = "zmark_versions_";
 
 export const getVersions = (path: string): Version[] => {
   if (!path) return [];
-  try {
-    const key = `${STORAGE_PREFIX}${path}`;
-    const stored = localStorage.getItem(key);
-    if (!stored) return [];
-    console.log("Loaded versions:", stored);
-    return JSON.parse(stored);
-  } catch (e) {
-    console.error("Failed to load versions", e);
+  const key = `${STORAGE_PREFIX}${path}`;
+  const stored = localStorage.getItem(key);
+  if (!stored) return [];
+  console.log("Loaded versions:", stored);
+  const [err, parsed] = toSync<Version[]>(() => JSON.parse(stored));
+  if (err) {
+    console.error("Failed to load versions", err);
     return [];
   }
+  return parsed as Version[];
 };
 
 export const getGitVersions = async (
@@ -98,14 +99,16 @@ export const saveVersion = (
 
   const newVersions = [newVersion, ...versions]; // Newest first
 
-  try {
+  const [err] = toSync(() => {
     localStorage.setItem(
       `${STORAGE_PREFIX}${path}`,
       JSON.stringify(newVersions),
     );
-  } catch (e) {
-    console.error("Failed to save version", e);
-    throw e;
+  });
+
+  if (err) {
+    console.error("Failed to save version", err);
+    throw err;
   }
 
   return newVersion;

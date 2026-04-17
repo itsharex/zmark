@@ -39,6 +39,7 @@ import {
 import { useKbStore } from "@/stores/kb";
 import type { ChatMessage, ChatSession } from "@/types/kb";
 import { formatTime } from "@/utils";
+import { to } from "@/utils/error-handler";
 import {
   Collapsible,
   CollapsibleContent,
@@ -137,10 +138,9 @@ export const ChatPanel = () => {
     }
     const question = input;
     setInput("");
-    try {
-      await sendMessage(question);
-    } catch (error) {
-      toast.error(`发送失败: ${error}`);
+    const [err] = await to(sendMessage(question));
+    if (err) {
+      toast.error(`发送失败: ${err}`);
     }
   };
 

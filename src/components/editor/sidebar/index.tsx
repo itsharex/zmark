@@ -17,6 +17,7 @@ import {
   getFileTree,
   getTreeKey,
 } from "@/utils";
+import { to } from "@/utils/error-handler";
 import { ActionButtons } from "./action-buttons";
 import { InputDialog } from "./input-dialog";
 import { Tree } from "./tree";
@@ -55,8 +56,8 @@ export function AppSidebar({ mode, ...props }: ISidebarProps) {
 
   useEffect(() => {
     const setupWatcher = async () => {
-      try {
-        const unwatch = await watch(
+      const [err, unwatch] = await to(
+        watch(
           "markdowns",
           () => {
             refreshFileTree();
@@ -66,10 +67,13 @@ export function AppSidebar({ mode, ...props }: ISidebarProps) {
             recursive: true,
             delayMs: 100,
           },
-        );
+        ),
+      );
+
+      if (err) {
+        console.error("Failed to setup file watcher:", err);
+      } else if (unwatch) {
         unwatchRef.current = unwatch;
-      } catch (error) {
-        console.error("Failed to setup file watcher:", error);
       }
     };
 

@@ -30,6 +30,7 @@ import {
   renameFileOrDir,
   resolveMarkdownImages,
 } from "@/utils";
+import { to } from "@/utils/error-handler";
 import { InputDialog } from "./input-dialog";
 
 interface ITreeProps {
@@ -77,18 +78,24 @@ export const Tree = (props: ITreeProps) => {
 
   const handleConfirmRename = async (newName: string) => {
     if (!newName) return;
-    try {
-      let finalName = newName;
-      // If file, ensure extension
-      if (typeof item === "string" && !finalName.endsWith(".md")) {
-        finalName += ".md";
-      }
+    let finalName = newName;
+    // If file, ensure extension
+    if (typeof item === "string" && !finalName.endsWith(".md")) {
+      finalName += ".md";
+    }
 
-      if (finalName === itemName) return;
+    if (finalName === itemName) return;
 
-      const newPath = await renameFileOrDir(fullPath, finalName);
-      toast.success("重命名成功");
+    const [err, newPath] = await to(renameFileOrDir(fullPath, finalName));
+    if (err) {
+      console.error(err);
+      toast.error("重命名失败");
+      return;
+    }
 
+    toast.success("重命名成功");
+
+    if (newPath) {
       if (curPath === fullPath) {
         setCurPath(newPath);
       } else if (curPath.startsWith(fullPath + separator)) {
@@ -96,12 +103,9 @@ export const Tree = (props: ITreeProps) => {
         const suffix = curPath.slice(fullPath.length);
         setCurPath(newPath + suffix);
       }
-
-      onRefresh?.();
-    } catch (error) {
-      console.error(error);
-      toast.error("重命名失败");
     }
+
+    onRefresh?.();
   };
 
   const handleDelete = async () => {
@@ -111,21 +115,22 @@ export const Tree = (props: ITreeProps) => {
     });
 
     if (confirmed) {
-      try {
-        await deleteFileOrDir(fullPath);
-        toast.success("删除成功");
-
-        // If current file is deleted, clear editor?
-        if (curPath === fullPath) {
-          setCurPath("");
-          setContent("");
-        }
-
-        onRefresh?.();
-      } catch (error) {
-        console.error(error);
+      const [err] = await to(deleteFileOrDir(fullPath));
+      if (err) {
+        console.error(err);
         toast.error("删除失败");
+        return;
       }
+
+      toast.success("删除成功");
+
+      // If current file is deleted, clear editor?
+      if (curPath === fullPath) {
+        setCurPath("");
+        setContent("");
+      }
+
+      onRefresh?.();
     }
   };
 
