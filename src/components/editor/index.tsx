@@ -9,13 +9,19 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useCollaboration, useSaveShortcut, useTableOfContents } from "@/hooks";
+import {
+  useCollaboration,
+  useEditorEvents,
+  useEditorExtensions,
+  useEditorSave,
+  useSaveShortcut,
+  useTableOfContents,
+} from "@/hooks";
 import { useAuthStore, useCollabStore, useEditorStore } from "@/stores";
 import type { EditorStorage } from "@/types/editor";
 import { EditorBubbleMenu } from "./bubble-menu";
 import { EmptyEditor } from "./fallback/empty-state.tsx";
 import { UnsupportedFile } from "./fallback/unsupported-file.tsx";
-import { useEditorEvents, useEditorExtensions, useEditorSave } from "./hooks";
 import { MenuBar } from "./menubar/index.tsx";
 import { TableOfContents } from "./toc";
 import { VersionHistory } from "./version-history";
