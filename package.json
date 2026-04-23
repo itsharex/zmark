@@ -76,6 +76,7 @@
     "@vitejs/devtools": "^0.1.0",
     "@vitejs/plugin-react": "6.0.1",
     "husky": "^9.1.7",
+    "prosemirror-model": "^1.25.4",
     "react-doctor": "^0.0.30",
     "rollup-plugin-visualizer": "^7.0.1",
     "sass-embedded": "^1.98.0",

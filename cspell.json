@@ -19,6 +19,7 @@
     "minisearch",
     "msvc",
     "Pilcrow",
+    "prosemirror",
     "Qwen",
     "reqwest",
     "rlib",
