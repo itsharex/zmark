@@ -1,4 +1,8 @@
-use tauri::{Emitter, Manager};
+use tauri::{
+    menu::{MenuBuilder, MenuItem, PredefinedMenuItem},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    Emitter, Manager,
+};
 #[cfg(any(target_os = "linux", all(target_os = "windows", target_env = "msvc")))]
 use tauri_plugin_deep_link::DeepLinkExt;
 
@@ -8,14 +12,6 @@ mod db;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .setup(|_app| {
-            #[cfg(debug_assertions)]
-            {
-                let window = _app.get_webview_window("main").unwrap();
-                window.open_devtools();
-            }
-            Ok(())
-        })
         .plugin(tauri_plugin_fs::init())
         // 允许打开浏览器
         .plugin(tauri_plugin_shell::init())
@@ -53,6 +49,62 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
+            let show_item = MenuItem::with_id(app, "show", "显示 zmark", true, None::<&str>)?;
+            let quit_item = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
+            let tray_menu = MenuBuilder::new(app)
+                .items(&[
+                    &show_item,
+                    &PredefinedMenuItem::separator(app)?,
+                    &quit_item,
+                ])
+                .build()?;
+
+            TrayIconBuilder::with_id("main-tray")
+                .menu(&tray_menu)
+                .show_menu_on_left_click(false)
+                .on_menu_event(|app, event| match event.id.as_ref() {
+                    "show" => {
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.show();
+                            let _ = window.set_focus();
+                        }
+                    }
+                    "quit" => app.exit(0),
+                    _ => {}
+                })
+                .on_tray_icon_event(|tray, event| {
+                    if let TrayIconEvent::Click {
+                        button: MouseButton::Left,
+                        button_state: MouseButtonState::Up,
+                        ..
+                    } = event
+                    {
+                        let app = tray.app_handle();
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.show();
+                            let _ = window.set_focus();
+                        }
+                    }
+                })
+                .build(app)?;
+
+            // #[cfg(debug_assertions)]
+            // {
+            //     let window = app.get_webview_window("main").unwrap();
+            //     window.open_devtools();
+            // }
+
+            // 阻止关闭，改为隐藏到系统托盘，保持协作连接继续运行。
+            if let Some(window) = app.get_webview_window("main") {
+                let window_clone = window.clone();
+                window.on_window_event(move |event| {
+                    if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+                        api.prevent_close();
+                        let _ = window_clone.hide();
+                    }
+                });
+            }
+
             db::init_db(app.handle())?;
 
             #[cfg(target_os = "macos")]
@@ -74,7 +126,10 @@ pub fn run() {
             commands::git::git_file_history,
             commands::git::git_file_content,
             commands::runner::run_python,
-            commands::ai::ai_copilot
+            commands::ai::ai_copilot,
+            commands::tray::minimize_to_tray,
+            commands::tray::show_window,
+            commands::tray::is_window_visible
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
