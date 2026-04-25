@@ -18,7 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      version: ${{ steps.version.outputs.version }}
+      version: ${{ steps.version.outputs.version || '' }}
+      tag: ${{ steps.version.outputs.tag || '' }}
 
     steps:
       - name: Checkout
@@ -40,6 +41,13 @@ jobs:
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
+      - name: Save current tag
+        id: save-tag
+        run: |
+          git fetch --tags
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT
+
       - name: Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -52,9 +60,13 @@ jobs:
       - name: Get version from git tag
         id: version
         run: |
-          VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
+          CURRENT_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          PREV_TAG="${{ steps.save-tag.outputs.prev_tag }}"
+          if [ "$PREV_TAG" != "$CURRENT_TAG" ] && [ -n "$CURRENT_TAG" ]; then
+            VERSION=$(echo "$CURRENT_TAG" | sed 's/^v//')
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
+          fi
 
 # =========================
 # 2. BUILD MATRIX
