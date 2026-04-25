@@ -1,6 +1,6 @@
 import MiniSearch from "minisearch";
 import type { SearchAction, SearchResponse } from "@/types/search";
-import { safeExecute } from "@/utils/error-handler";
+import { safeExecute } from "@/utils";
 
 const miniSearch = new MiniSearch({
   fields: ["title", "content"], // fields to index for full-text search

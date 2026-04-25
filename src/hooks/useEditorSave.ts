@@ -4,8 +4,7 @@ import type { Editor } from "@tiptap/core";
 import { toast } from "sonner";
 import type { CollabFile } from "@/stores/collab";
 import type { EditorStorage } from "@/types/editor";
-import { addOrUpdateFile, unresolveMarkdownImages } from "@/utils";
-import { to } from "@/utils/error-handler";
+import { addOrUpdateFile, to, unresolveMarkdownImages } from "@/utils";
 
 interface UseEditorSaveProps {
   editor: Editor | null;

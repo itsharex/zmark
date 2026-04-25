@@ -6,7 +6,7 @@ import tippy, {
   type Props,
 } from "tippy.js";
 import { useEditorStore } from "@/stores/editor";
-import { getAllMarkdownFiles } from "@/utils/file";
+import { getAllMarkdownFiles } from "@/utils";
 import { MentionList } from "./mention-list";
 
 export const getMentionSuggestion = (): Omit<

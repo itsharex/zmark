@@ -24,8 +24,7 @@ import {
 } from "@/components/ui/popover";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useMenuBar } from "@/hooks";
-import { handleImageUpload } from "@/utils";
-import { to } from "@/utils/error-handler";
+import { handleImageUpload, to } from "@/utils";
 import { HeadingPicker } from "./heading-picker";
 import { HighlightColorPicker } from "./highlight-picker";
 import { LinkPopover } from "./link-popover";

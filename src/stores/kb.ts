@@ -11,7 +11,7 @@ import type {
   KnowledgeBase,
   ThinkingProcess,
 } from "@/types/kb";
-import { to } from "@/utils/error-handler";
+import { to } from "@/utils";
 
 const defaultApiKey = import.meta.env.VITE_SILICONFLOW_API_KEY?.trim() || "";
 const hasEnvApiKeyConfigured = defaultApiKey.length > 0;

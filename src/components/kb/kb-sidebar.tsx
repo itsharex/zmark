@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useKbStore } from "@/stores";
 import type { Document, KnowledgeBase } from "@/types/kb";
-import { to } from "@/utils/error-handler";
+import { to } from "@/utils";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import {

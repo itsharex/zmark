@@ -1,8 +1,7 @@
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { Editor } from "@tiptap/core";
 import { toast } from "sonner";
-import { handleImageUpload } from "@/utils";
-import { to } from "@/utils/error-handler";
+import { handleImageUpload, to } from "@/utils";
 
 export function useEditorEvents() {
   return {

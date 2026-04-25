@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { toSync } from "@/utils/error-handler";
+import { toSync } from "@/utils";
 
 export interface Version {
   id: string;

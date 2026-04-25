@@ -10,15 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { to, toSync } from "@/utils/error-handler";
 import {
   type GitCommitVersion,
   getGitVersionContent,
   getGitVersions,
   getVersions,
   saveVersion,
+  to,
+  toSync,
   type Version,
-} from "@/utils/version-storage";
+} from "@/utils";
 
 interface VersionHistoryProps {
   curPath: string;

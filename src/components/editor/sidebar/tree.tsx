@@ -29,8 +29,8 @@ import {
   getTreeKey,
   renameFileOrDir,
   resolveMarkdownImages,
+  to,
 } from "@/utils";
-import { to } from "@/utils/error-handler";
 import { InputDialog } from "./input-dialog";
 
 interface ITreeProps {

@@ -1,6 +1,6 @@
 import type { SearchResult } from "minisearch";
 import type { FileContent, SearchAction, SearchResponse } from "@/types/search";
-import { safeExecute } from "@/utils/error-handler";
+import { safeExecute } from "@/utils";
 import SearchWorker from "./search.worker?worker";
 
 // 创建 Worker 实例
