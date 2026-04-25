@@ -4,7 +4,7 @@
 
 ## 1. 桌面端原生体验增强 (Tauri 特性)
 - [ ] **全局快捷键与 Quick Capture (快速记录)**：注册系统全局快捷键（如 `Cmd/Ctrl + Shift + Space`），在任何软件中呼出悬浮窗快速记录灵感（类似 Raycast 或 Logseq）。
-- [ ] **系统托盘 (System Tray)**：最小化到系统托盘，后台保持 Yjs 的协作同步和 WebSocket 连接。
+- [x] **系统托盘 (System Tray)**：最小化到系统托盘，后台保持 Yjs 的协作同步和 WebSocket 连接。
 - [ ] **文件关联 (File Associations)**：在系统层面注册 `.md` 或专属的 `.zmark` 扩展名，双击本地文件直接通过 ZMark 打开。
 - [ ] **本地优先的 SQLite 存储**：结合 `@tauri-apps/plugin-sql`，将文档缓存和索引存储在本地 SQLite 中，实现离线可用，连网后自动同步（Local-first 架构）。
 

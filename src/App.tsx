@@ -3,6 +3,7 @@ import {
   Library,
   Loader2,
   LogOut,
+  Minimize,
   Settings,
   Users,
 } from "lucide-react";
@@ -12,6 +13,7 @@ import { SearchCommand } from "@/components/editor/search-command";
 import { AccountSettingsPage } from "@/components/settings";
 import { getAllMarkdownFiles, indexFiles } from "@/utils";
 import { to } from "@/utils/error-handler";
+import { minimizeToTray } from "@/utils/tray";
 import { LoginButton } from "./components/auth/LoginButton";
 import { UserAvatar } from "./components/auth/UserAvatar";
 import { CollabSidebar } from "./components/collab/collab-sidebar";
@@ -170,6 +172,14 @@ const App = () => {
               </div>
               <div className="flex flex-col items-center gap-4 mb-4">
                 <ThemeToggle />
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => minimizeToTray()}
+                  title="最小化到系统托盘"
+                >
+                  <Minimize className="size-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon-xs"
