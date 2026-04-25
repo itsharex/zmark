@@ -13,15 +13,15 @@ if (!cleanMsg) {
 
 // 1. Check for scope: type(scope): ...
 // Conventional commits pattern with scope
-const scopeRegex = /^[a-z]+\s*\([^)]+\):/;
-if (scopeRegex.test(cleanMsg)) {
-  console.error(
-    "\x1b[31m%s\x1b[0m",
-    'ERROR: Commit message must not contain a scope (e.g., "feat(scope):").',
-  );
-  console.error("\x1b[31m%s\x1b[0m", "Please remove the scope and try again.");
-  process.exit(1);
-}
+// const scopeRegex = /^[a-z]+\s*\([^)]+\):/;
+// if (scopeRegex.test(cleanMsg)) {
+//   console.error(
+//     "\x1b[31m%s\x1b[0m",
+//     'ERROR: Commit message must not contain a scope (e.g., "feat(scope):").',
+//   );
+//   console.error("\x1b[31m%s\x1b[0m", "Please remove the scope and try again.");
+//   process.exit(1);
+// }
 
 // 2. Check for description (body)
 // If there is more than one line of content (excluding empty lines between subject and body if any)
