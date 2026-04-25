@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/zhoumowan/zmark/compare/v1.7.0...v1.7.1) (2026-04-25)
+
+
+### Bug Fixes
+
+* add init log ([644403d](https://github.com/zhoumowan/zmark/commit/644403d18a5af1f830721d231f32eae9de66f5c1))
+
 # [1.7.0](https://github.com/zhoumowan/zmark/compare/v1.6.2...v1.7.0) (2026-04-25)
 
 
