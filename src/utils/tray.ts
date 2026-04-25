@@ -29,7 +29,7 @@ export async function showWindow(): Promise<void> {
  */
 export async function isWindowVisible(): Promise<boolean> {
   try {
-    return await invoke("is_window_visible");
+    return await invoke<boolean>("is_window_visible");
   } catch (error) {
     console.error("检查窗口可见性失败:", error);
     return false;
