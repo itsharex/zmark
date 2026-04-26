@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/zhoumowan/zmark/compare/v1.7.1...v1.8.0) (2026-04-26)
+
+
+### Features
+
+* 支持文件关联打开和启动参数处理 ([6046aef](https://github.com/zhoumowan/zmark/commit/6046aefed74fc407d5da0e451e09622818eb0224))
+
 ## [1.7.1](https://github.com/zhoumowan/zmark/compare/v1.7.0...v1.7.1) (2026-04-25)
 
 
