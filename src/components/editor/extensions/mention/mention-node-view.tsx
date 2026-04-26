@@ -2,8 +2,7 @@ import { readTextFile } from "@tauri-apps/plugin-fs";
 import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { File } from "lucide-react";
 import { useEditorStore } from "@/stores/editor";
-import { to } from "@/utils/error-handler";
-import { resolveMarkdownImages } from "@/utils/file";
+import { resolveMarkdownImages, to } from "@/utils";
 
 export const MentionNodeView = (props: NodeViewProps) => {
   const { setCurPath, setContent } = useEditorStore();

@@ -18,11 +18,8 @@ import {
 import { useEditorStore } from "@/stores/editor";
 import type { TreeItem } from "@/types/editor";
 import type { FileContent } from "@/types/search";
-import { to } from "@/utils/error-handler";
-import {
-  addOrUpdateFile,
-  removeFile as removeSearchIndex,
-} from "@/utils/search";
+import { to } from "./error-handler";
+import { addOrUpdateFile, removeFile as removeSearchIndex } from "./search";
 
 /**
  * 获取数据目录路径

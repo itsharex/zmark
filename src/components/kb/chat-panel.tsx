@@ -39,8 +39,7 @@ import {
 } from "@/consts/chat";
 import { useKbStore } from "@/stores/kb";
 import type { ChatMessage, ChatSession } from "@/types/kb";
-import { formatTime } from "@/utils";
-import { to } from "@/utils/error-handler";
+import { formatTime, to } from "@/utils";
 import {
   Collapsible,
   CollapsibleContent,

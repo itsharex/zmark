@@ -5,7 +5,7 @@ import App from "./App";
 import { ErrorBoundary } from "./components/error-boundary";
 import "./index.css";
 
-import { toSync } from "@/utils/error-handler";
+import { toSync } from "@/utils";
 
 // 全局错误捕获
 window.addEventListener("error", (event) => {

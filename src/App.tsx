@@ -18,8 +18,8 @@ import {
   getAllMarkdownFiles,
   indexFiles,
   resolveMarkdownImages,
+  to,
 } from "@/utils";
-import { to } from "@/utils/error-handler";
 import { minimizeToTray } from "@/utils/tray";
 import { LoginButton } from "./components/auth/LoginButton";
 import { UserAvatar } from "./components/auth/UserAvatar";

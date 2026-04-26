@@ -1,27 +1,13 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { useEffect, useState } from "react";
-import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
-import { toSync } from "@/utils/error-handler";
+import {
+  base64ToUint8,
+  toSync,
+  uint8ToBase64,
+} from "@/utils";
 import { supabase } from "@/utils/supabase-client";
-
-const uint8ToBase64 = (bytes: Uint8Array) => {
-  let binary = "";
-  const chunkSize = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary);
-};
-
-const base64ToUint8 = (base64: string) => {
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
-};
+import { TauriSqlitePersistence } from "@/utils/y-sqlite";
 
 export function useCollaboration(collabId: string | null) {
   const [ydoc] = useState(() => new Y.Doc());
@@ -31,15 +17,15 @@ export function useCollaboration(collabId: string | null) {
     import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY,
   );
 
-  // 1. 本地 IndexedDB 持久化
+  // 1. 本地 SQLite 持久化
   useEffect(() => {
     if (!collabId) return;
-    const persistence = new IndexeddbPersistence(
+    const persistence = new TauriSqlitePersistence(
       `zmark-collab:${collabId}`,
       ydoc,
     );
     return () => {
-      persistence.destroy();
+      void persistence.destroy();
     };
   }, [collabId, ydoc]);
 

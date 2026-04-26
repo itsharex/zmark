@@ -11,8 +11,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { useEditorStore, useSearchStore } from "@/stores";
-import { resolveMarkdownImages, search, subscribeToSearch } from "@/utils";
-import { to } from "@/utils/error-handler";
+import { resolveMarkdownImages, search, subscribeToSearch, to } from "@/utils";
 
 export function SearchCommand() {
   const { isOpen, setIsOpen, toggle } = useSearchStore();

@@ -53,6 +53,7 @@ pub fn run() {
         }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_sql::Builder::default().build())
         .setup(|app| {
             let show_item = MenuItem::with_id(app, "show", "显示 zmark", true, None::<&str>)?;
             let quit_item = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;

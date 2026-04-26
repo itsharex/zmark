@@ -16,8 +16,8 @@ import {
   getDataDir,
   getFileTree,
   getTreeKey,
+  to,
 } from "@/utils";
-import { to } from "@/utils/error-handler";
 import { ActionButtons } from "./action-buttons";
 import { InputDialog } from "./input-dialog";
 import { Tree } from "./tree";
