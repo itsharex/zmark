@@ -1,3 +1,15 @@
+# [1.9.0](https://github.com/zhoumowan/zmark/compare/v1.8.0...v1.9.0) (2026-04-26)
+
+
+### Bug Fixes
+
+* 修复构建报错的锁文件缺失 ([63c192a](https://github.com/zhoumowan/zmark/commit/63c192a32da80db25ba126692d22d7d1a57777e5))
+
+
+### Features
+
+* y-indexeddb 迁移到 y-sqlite 并且重导出了 utils ([0358cb5](https://github.com/zhoumowan/zmark/commit/0358cb575862f3926187664a9139c64bf65ee2c7))
+
 # [1.8.0](https://github.com/zhoumowan/zmark/compare/v1.7.1...v1.8.0) (2026-04-26)
 
 
