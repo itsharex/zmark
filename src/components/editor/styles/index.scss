@@ -39,6 +39,7 @@ html {
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
     overflow-y: scroll;
+    overscroll-behavior: none;
 }
 
 body {
@@ -95,6 +96,19 @@ body {
 
 ::-webkit-scrollbar-corner {
     background-color: transparent
+}
+
+/* 隐藏特定元素的滚动条但保留滚动功能 */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    overscroll-behavior: none; /* 防止滚动到边缘时拖拽整个页面 */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
 }
 
 button,input,select,textarea {

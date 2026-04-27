@@ -3,9 +3,10 @@ import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { File } from "lucide-react";
 import { useEditorStore } from "@/stores/editor";
 import { resolveMarkdownImages, to } from "@/utils";
+import { parseMarkdown } from "@/utils/frontmatter";
 
 export const MentionNodeView = (props: NodeViewProps) => {
-  const { setCurPath, setContent } = useEditorStore();
+  const { setCurPath, setContent, setFrontmatter } = useEditorStore();
   const { node } = props;
 
   const id = node.attrs.id; // file path
@@ -14,8 +15,13 @@ export const MentionNodeView = (props: NodeViewProps) => {
   const handleClick = async () => {
     if (!id) return;
 
+    let frontmatter = {};
     const [err, content] = await to(
-      readTextFile(id).then((text) => resolveMarkdownImages(text, id)),
+      readTextFile(id).then((text) => {
+        const parsed = parseMarkdown(text);
+        frontmatter = parsed.frontmatter;
+        return resolveMarkdownImages(parsed.body, id);
+      }),
     );
 
     if (err) {
@@ -24,6 +30,7 @@ export const MentionNodeView = (props: NodeViewProps) => {
     }
 
     if (content !== undefined) {
+      setFrontmatter(frontmatter);
       setContent(content);
       setCurPath(id);
     }

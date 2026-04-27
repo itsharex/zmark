@@ -31,6 +31,7 @@ import {
   resolveMarkdownImages,
   to,
 } from "@/utils";
+import { parseMarkdown } from "@/utils/frontmatter";
 import { InputDialog } from "./input-dialog";
 
 interface ITreeProps {
@@ -57,8 +58,14 @@ export const Tree = (props: ITreeProps) => {
     return unsubscribe;
   }, [subscribe]);
 
-  const { curPath, setCurPath, setContent, setPreviewPath, previewPath } =
-    useEditorStore();
+  const {
+    curPath,
+    setCurPath,
+    setContent,
+    setFrontmatter,
+    setPreviewPath,
+    previewPath,
+  } = useEditorStore();
 
   const separator = sep();
   const itemName = typeof item === "string" ? item : (item[0] as string);
@@ -144,9 +151,12 @@ export const Tree = (props: ITreeProps) => {
       // Only read content for markdown files
       if (fullPath.endsWith(".md")) {
         const content = await readTextFile(fullPath);
-        const resolvedContent = await resolveMarkdownImages(content, fullPath);
+        const { frontmatter, body } = parseMarkdown(content);
+        const resolvedContent = await resolveMarkdownImages(body, fullPath);
+        setFrontmatter(frontmatter);
         setContent(resolvedContent);
       } else {
+        setFrontmatter({});
         setContent(""); // Clear content for unsupported files
       }
     };

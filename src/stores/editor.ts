@@ -6,6 +6,8 @@ import { create } from "zustand";
 interface EditorState {
   content: string;
   setContent: (content: string) => void;
+  frontmatter: Record<string, string | string[]>;
+  setFrontmatter: (frontmatter: Record<string, string | string[]>) => void;
   curPath: string;
   setCurPath: (path: string) => void;
   previewPath: string;
@@ -19,6 +21,8 @@ interface EditorState {
 export const useEditorStore = create<EditorState>((set) => ({
   content: "",
   setContent: (content) => set({ content }),
+  frontmatter: {},
+  setFrontmatter: (frontmatter) => set({ frontmatter }),
   curPath: "",
   setCurPath: (curPath) => set({ curPath }),
   previewPath: "",

@@ -22,6 +22,7 @@ import type { EditorStorage } from "@/types/editor";
 import { EditorBubbleMenu } from "./bubble-menu";
 import { EmptyEditor } from "./fallback/empty-state.tsx";
 import { UnsupportedFile } from "./fallback/unsupported-file.tsx";
+import { FrontmatterPanel } from "./frontmatter-panel";
 import { MenuBar } from "./menubar/index.tsx";
 import { TableOfContents } from "./toc";
 import { VersionHistory } from "./version-history";
@@ -124,10 +125,16 @@ export default function Editor({
                 onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
               />
               <div className="flex flex-1 overflow-hidden relative">
-                <EditorContent
-                  editor={editor}
-                  className="flex-1 h-full overflow-y-auto"
-                />
+                <div className="flex-1 h-full overflow-y-auto no-scrollbar">
+                  <div className="max-w-[800px] mx-auto">
+                    <div className="pt-8 px-6 sm:px-12">
+                      <FrontmatterPanel />
+                    </div>
+                    <div className="px-0 sm:px-6">
+                      <EditorContent editor={editor} />
+                    </div>
+                  </div>
+                </div>
                 {isTocOpen && (
                   <TableOfContents editor={editor} items={tocItems} />
                 )}

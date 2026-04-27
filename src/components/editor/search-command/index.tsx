@@ -12,10 +12,11 @@ import {
 } from "@/components/ui/command";
 import { useEditorStore, useSearchStore } from "@/stores";
 import { resolveMarkdownImages, search, subscribeToSearch, to } from "@/utils";
+import { parseMarkdown } from "@/utils/frontmatter";
 
 export function SearchCommand() {
   const { isOpen, setIsOpen, toggle } = useSearchStore();
-  const { setCurPath, setContent } = useEditorStore();
+  const { setCurPath, setContent, setFrontmatter } = useEditorStore();
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<SearchResult[]>([]);
 
@@ -57,10 +58,13 @@ export function SearchCommand() {
   }, [query]);
 
   const handleSelect = async (path: string) => {
+    let frontmatter = {};
     const [err, resolvedContent] = await to(
-      readTextFile(path).then((content) =>
-        resolveMarkdownImages(content, path),
-      ),
+      readTextFile(path).then((content) => {
+        const parsed = parseMarkdown(content);
+        frontmatter = parsed.frontmatter;
+        return resolveMarkdownImages(parsed.body, path);
+      }),
     );
     if (err) {
       console.error("Failed to read file:", err);
@@ -68,6 +72,7 @@ export function SearchCommand() {
     }
 
     if (resolvedContent !== undefined) {
+      setFrontmatter(frontmatter);
       setContent(resolvedContent);
       setCurPath(path);
       setIsOpen(false);

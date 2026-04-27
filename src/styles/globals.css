@@ -9,6 +9,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    overscroll-behavior: none;
   }
   body[data-scroll-locked] {
     /* biome-ignore lint/complexity/noImportantStyles: 覆盖 Radix UI 在 body 注入的行内 margin-right 样式 */

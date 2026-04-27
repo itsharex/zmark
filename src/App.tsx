@@ -23,6 +23,7 @@ import {
   resolveMarkdownImages,
   to,
 } from "@/utils";
+import { parseMarkdown } from "@/utils/frontmatter";
 import { minimizeToTray } from "@/utils/tray";
 import { LoginButton } from "./components/auth/LoginButton";
 import { UserAvatar } from "./components/auth/UserAvatar";
@@ -95,7 +96,9 @@ const MainApp = () => {
         return;
       try {
         const content = await readTextFile(filePath);
-        const resolvedContent = await resolveMarkdownImages(content, filePath);
+        const { frontmatter, body } = parseMarkdown(content);
+        const resolvedContent = await resolveMarkdownImages(body, filePath);
+        useEditorStore.getState().setFrontmatter(frontmatter);
         useEditorStore.getState().setContent(resolvedContent);
         useEditorStore.getState().setCurPath(filePath);
         setMode("editor");

@@ -48,7 +48,7 @@ export const TableOfContents = ({ editor, items }: TableOfContentsProps) => {
   };
 
   return (
-    <div className="w-64 border-l bg-background/50 p-4 shrink-0 h-full overflow-y-auto">
+    <div className="w-64 border-l bg-background/50 p-4 shrink-0 h-full overflow-y-auto no-scrollbar">
       <div className="font-medium text-sm mb-4 text-muted-foreground">大纲</div>
       <div className="flex flex-col space-y-1">
         {items.map((item) => (

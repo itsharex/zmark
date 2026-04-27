@@ -3,15 +3,15 @@
 以下是基于当前项目架构（Tauri + React + Tiptap + Yjs + Supabase）的功能增强建议列表。你可以通过勾选复选框来标记开发进度。
 
 ## 1. 桌面端原生体验增强 (Tauri 特性)
-- [ ] **全局快捷键与 Quick Capture (快速记录)**：注册系统全局快捷键（如 `Cmd/Ctrl + Shift + Space`），在任何软件中呼出悬浮窗快速记录灵感（类似 Raycast 或 Logseq）。
+- [x] **全局快捷键与 Quick Capture (快速记录)**：注册系统全局快捷键（如 `Cmd/Ctrl + Shift + Space`），在任何软件中呼出悬浮窗快速记录灵感（类似 Raycast 或 Logseq）。
 - [x] **系统托盘 (System Tray)**：最小化到系统托盘，后台保持 Yjs 的协作同步和 WebSocket 连接。
 - [x] **文件关联 (File Associations)**：在系统层面注册 `.md` 或专属的 `.zmark` 扩展名，双击本地文件直接通过 ZMark 打开。
 - [x] **本地优先的 SQLite 存储**：结合 `@tauri-apps/plugin-sql`，将文档缓存和索引存储在本地 SQLite 中，实现离线可用，连网后自动同步（Local-first 架构）。
 
 ## 2. 知识库与双向链接 (KB Enhancements)
-- [ ] **双向链接 (Bi-directional Links)**：支持 `[[页面名称]]` 语法，自动关联其他文档。
+- [x] **双向链接 (Bi-directional Links)**：支持 `@` 语法，自动关联其他文档。
 - [ ] **知识图谱 (Graph View)**：基于双向链接的数据，使用 D3.js 或 ECharts 渲染文档间的关系网状图。
-- [ ] **Frontmatter / 属性面板**：为每篇文档添加元数据（标签、状态、创建时间、自定义字段），方便在侧边栏或全局进行过滤。
+- [x] **Frontmatter / 属性面板**：为每篇文档添加元数据（标签、状态、创建时间、自定义字段），方便在侧边栏或全局进行过滤。
 - [ ] **多工作区 (Workspaces)**：支持本地文件夹作为工作区，或 Supabase 云端多团队切换。
 
 ## 3. 编辑器深度功能 (Tiptap 扩展)
