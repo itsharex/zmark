@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/zhoumowan/zmark/compare/v1.9.0...v1.10.0) (2026-04-27)
+
+
+### Features
+
+* **quick-capture:** 新增全局快捷键快速记录窗口 ([e9cf854](https://github.com/zhoumowan/zmark/commit/e9cf85464ef61c11f1146600765ebd1d6a0475ca))
+
 # [1.9.0](https://github.com/zhoumowan/zmark/compare/v1.8.0...v1.9.0) (2026-04-26)
 
 
