@@ -1,3 +1,11 @@
+# [1.11.0](https://github.com/zhoumowan/zmark/compare/v1.10.0...v1.11.0) (2026-04-27)
+
+
+### Features
+
+* 添加 frontmatter 支持与界面优化 ([67be635](https://github.com/zhoumowan/zmark/commit/67be63560f352ef57c89b26e0812d73a256995e5))
+* 添加文档属性内联显示切换功能 ([0f7d60d](https://github.com/zhoumowan/zmark/commit/0f7d60d2fe5dd3f498c418314f0d4eef7bf2a22b))
+
 # [1.10.0](https://github.com/zhoumowan/zmark/compare/v1.9.0...v1.10.0) (2026-04-27)
 
 
