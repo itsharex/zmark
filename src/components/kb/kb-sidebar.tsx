@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useKbStore } from "@/stores";
 import type { Document, KnowledgeBase } from "@/types/kb";
-import { to } from "@/utils";
+import { getDisplayFilename, to } from "@/utils";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import {
@@ -44,9 +44,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-
-const getDisplayFilename = (filename: string) =>
-  filename.split(/[/\\]/).pop() || filename;
 
 export function KbSidebar({
   mode,

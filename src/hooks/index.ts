@@ -4,6 +4,8 @@ export * from "./useColorHighlight";
 export * from "./useEditorEvents";
 export * from "./useEditorExtensions";
 export * from "./useEditorSave";
+export * from "./useEnterSubmit";
+export * from "./useGlobalShortcut";
 export * from "./useIsMac";
 export * from "./useKeyDisplay";
 export * from "./useLinkPopover";

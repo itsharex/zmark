@@ -9,7 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { useLinkPopover } from "@/hooks";
+import { useEnterSubmit, useLinkPopover } from "@/hooks";
 import { MenuButton } from "./menu-button";
 
 export const LinkPopoverContent = ({
@@ -24,16 +24,10 @@ export const LinkPopoverContent = ({
   removeLink: () => void;
 }) => (
   <div className="flex items-center gap-1 px-3 py-1.5 w-[320px]">
-    <Input
-      placeholder="输入链接地址..."
-      value={internalUrl}
-      onChange={(e) => setInternalUrl(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          handleSetLink();
-        }
-      }}
-      className="flex-1 h-8 text-sm border-none shadow-none focus-visible:ring-0 px-1 bg-transparent hover:bg-transparent!"
+    <LinkInput
+      internalUrl={internalUrl}
+      setInternalUrl={setInternalUrl}
+      handleSetLink={handleSetLink}
     />
     <Button
       size="icon"
@@ -56,6 +50,30 @@ export const LinkPopoverContent = ({
     </Button>
   </div>
 );
+
+const LinkInput = ({
+  internalUrl,
+  setInternalUrl,
+  handleSetLink,
+}: {
+  internalUrl: string;
+  setInternalUrl: (url: string) => void;
+  handleSetLink: () => void;
+}) => {
+  const enterSubmit = useEnterSubmit({ onEnter: handleSetLink });
+
+  return (
+    <Input
+      placeholder="输入链接地址..."
+      value={internalUrl}
+      onChange={(e) => setInternalUrl(e.target.value)}
+      onKeyDown={enterSubmit.onKeyDown}
+      onCompositionStart={enterSubmit.onCompositionStart}
+      onCompositionEnd={enterSubmit.onCompositionEnd}
+      className="flex-1 h-8 text-sm border-none shadow-none focus-visible:ring-0 px-1 bg-transparent hover:bg-transparent!"
+    />
+  );
+};
 
 export const LinkPopover = ({
   editor,

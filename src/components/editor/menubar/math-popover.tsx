@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useMathPopover } from "@/hooks";
+import { useEnterSubmit, useMathPopover } from "@/hooks";
 import { MenuButton } from "./menu-button";
 
 export const MathPopoverContent = ({
@@ -21,16 +21,10 @@ export const MathPopoverContent = ({
   handleSetMath: () => void;
 }) => (
   <div className="flex items-center gap-1 px-3 py-1.5 w-[320px]">
-    <Input
-      placeholder="输入 LaTeX 公式..."
-      value={latex}
-      onChange={(e) => setLatex(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          handleSetMath();
-        }
-      }}
-      className="flex-1 h-8 text-sm border-none shadow-none focus-visible:ring-0 px-1 bg-transparent hover:bg-transparent!"
+    <MathInput
+      latex={latex}
+      setLatex={setLatex}
+      handleSetMath={handleSetMath}
     />
     <Button
       size="icon"
@@ -43,6 +37,30 @@ export const MathPopoverContent = ({
     </Button>
   </div>
 );
+
+const MathInput = ({
+  latex,
+  setLatex,
+  handleSetMath,
+}: {
+  latex: string;
+  setLatex: (val: string) => void;
+  handleSetMath: () => void;
+}) => {
+  const enterSubmit = useEnterSubmit({ onEnter: handleSetMath });
+
+  return (
+    <Input
+      placeholder="输入 LaTeX 公式..."
+      value={latex}
+      onChange={(e) => setLatex(e.target.value)}
+      onKeyDown={enterSubmit.onKeyDown}
+      onCompositionStart={enterSubmit.onCompositionStart}
+      onCompositionEnd={enterSubmit.onCompositionEnd}
+      className="flex-1 h-8 text-sm border-none shadow-none focus-visible:ring-0 px-1 bg-transparent hover:bg-transparent!"
+    />
+  );
+};
 
 export const MathPopover = ({ editor }: { editor: Editor }) => {
   const { latex, setMath, isOpen, setIsOpen } = useMathPopover(editor);

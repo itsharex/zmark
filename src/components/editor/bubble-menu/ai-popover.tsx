@@ -9,7 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useAiCopilot } from "@/hooks";
+import { useAiCopilot, useEnterSubmit } from "@/hooks";
 import { MenuButton } from "../menubar/menu-button";
 
 interface AiCopilotPopoverProps {
@@ -35,6 +35,10 @@ export const AiCopilotPopover = ({
     toggleCopilot,
     virtualElement,
   } = useAiCopilot(editor);
+  const enterSubmit = useEnterSubmit({
+    enabled: Boolean(prompt.trim()),
+    onEnter: () => runAiCopilot(prompt),
+  });
 
   if (!editor) return null;
 
@@ -79,12 +83,9 @@ export const AiCopilotPopover = ({
             placeholder="告诉 AI 你想如何处理这段文本..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && prompt.trim()) {
-                e.preventDefault();
-                runAiCopilot(prompt);
-              }
-            }}
+            onKeyDown={enterSubmit.onKeyDown}
+            onCompositionStart={enterSubmit.onCompositionStart}
+            onCompositionEnd={enterSubmit.onCompositionEnd}
             disabled={isGenerating}
             className="h-9"
           />

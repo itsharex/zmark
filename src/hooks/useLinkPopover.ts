@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/core";
 import { useCallback, useEffect, useState } from "react";
+import { useGlobalShortcut } from "./useGlobalShortcut";
 
 export function useLinkPopover(editor: Editor | null) {
   const [url, setUrl] = useState("");
@@ -49,21 +50,12 @@ export function useLinkPopover(editor: Editor | null) {
     setIsOpen((prev) => !prev);
   }, [editor]);
 
-  useEffect(() => {
-    if (!editor) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
-        event.preventDefault();
-        toggleLink();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [editor, toggleLink]);
+  useGlobalShortcut({
+    key: "k",
+    onTrigger: toggleLink,
+    requireMod: true,
+    enabled: Boolean(editor),
+  });
 
   return {
     url,

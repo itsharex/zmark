@@ -67,6 +67,10 @@ export function getTreeKey(item: TreeItem) {
   return typeof item === "string" ? item : String(item[0]);
 }
 
+export function getDisplayFilename(filePath: string) {
+  return filePath.split(/[/\\]/).pop() || filePath;
+}
+
 export async function isDir(path: string) {
   const [err, fileStat] = await to(stat(path));
   if (err) {

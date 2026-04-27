@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useEnterSubmit } from "@/hooks";
 
 interface InputDialogProps {
   open: boolean;
@@ -28,7 +29,6 @@ export function InputDialog({
 }: InputDialogProps) {
   const [inputValue, setInputValue] = useState(initialValue);
   const inputRef = useRef<HTMLInputElement>(null);
-  const isComposing = useRef(false);
 
   useEffect(() => {
     if (open) {
@@ -44,6 +44,7 @@ export function InputDialog({
     setInputValue("");
     onClose();
   };
+  const enterSubmit = useEnterSubmit({ onEnter: handleConfirm });
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -58,16 +59,9 @@ export function InputDialog({
             value={inputValue}
             placeholder={placeholder}
             onChange={(e) => setInputValue(e.target.value)}
-            onCompositionStart={() => (isComposing.current = true)}
-            onCompositionEnd={() => {
-              setTimeout(() => (isComposing.current = false), 100);
-            }}
-            onKeyDown={(e) => {
-              if (isComposing.current) return;
-              if (e.key === "Enter") {
-                handleConfirm();
-              }
-            }}
+            onKeyDown={enterSubmit.onKeyDown}
+            onCompositionStart={enterSubmit.onCompositionStart}
+            onCompositionEnd={enterSubmit.onCompositionEnd}
           />
         </div>
         <DialogFooter>

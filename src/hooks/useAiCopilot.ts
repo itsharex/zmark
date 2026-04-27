@@ -1,11 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import type { Editor } from "@tiptap/core";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { useKbStore } from "@/stores/kb";
 import type { EditorStorage } from "@/types/editor";
 import { logError, logWarn } from "@/utils";
+import { useGlobalShortcut } from "./useGlobalShortcut";
 
 export function useAiCopilot(editor: Editor | null) {
   const [isOpen, setIsOpen] = useState(false);
@@ -214,21 +215,12 @@ export function useAiCopilot(editor: Editor | null) {
     }
   };
 
-  useEffect(() => {
-    if (!editor) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === "j") {
-        event.preventDefault();
-        toggleCopilot();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [editor, toggleCopilot]);
+  useGlobalShortcut({
+    key: "j",
+    onTrigger: toggleCopilot,
+    requireMod: true,
+    enabled: Boolean(editor),
+  });
 
   return {
     isOpen,

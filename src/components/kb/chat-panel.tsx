@@ -39,7 +39,7 @@ import {
 } from "@/consts/chat";
 import { useKbStore } from "@/stores/kb";
 import type { ChatMessage, ChatSession } from "@/types/kb";
-import { formatTime, to } from "@/utils";
+import { formatTime, getDisplayFilename, to } from "@/utils";
 import {
   Collapsible,
   CollapsibleContent,
@@ -70,9 +70,6 @@ const getConversationPreview = (session: ChatSession) => {
   const normalized = latestMessage.content.replace(/\s+/g, " ").trim();
   return normalized.length > 56 ? `${normalized.slice(0, 56)}...` : normalized;
 };
-
-const getDisplayFilename = (filename: string) =>
-  filename.split(/[/\\]/).pop() || filename;
 
 export const ChatPanel = () => {
   const isEnvApiKeyConfigured = Boolean(
