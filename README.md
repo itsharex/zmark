@@ -108,3 +108,5 @@ sequenceDiagram
 5.  **Code 交换 Session**: App 截获 URL 中的 `code` 参数，调用 Supabase SDK 换取最终的 Session，完成登录。
 
 ## License
+
+MIT
