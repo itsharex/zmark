@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/zhoumowan/zmark/compare/v1.11.0...v1.12.0) (2026-04-27)
+
+
+### Features
+
+* 新增日志工具函数并替换 console 调用 ([e295831](https://github.com/zhoumowan/zmark/commit/e29583133fe90e2537920503adcdf6882bf0f43e))
+
 # [1.11.0](https://github.com/zhoumowan/zmark/compare/v1.10.0...v1.11.0) (2026-04-27)
 
 
