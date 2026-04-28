@@ -10,11 +10,13 @@ import {
   LogOut,
   Minimize,
   Settings,
+  Share2,
   Users,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { SearchCommand } from "@/components/editor/search-command";
+import { GraphView } from "@/components/graph/graph-view";
 import { QuickCaptureWindow } from "@/components/quick-capture/window";
 import { AccountSettingsPage } from "@/components/settings";
 import {
@@ -44,9 +46,9 @@ import { useAuthStore, useEditorStore } from "./stores";
 
 const MainApp = () => {
   const { curPath, activeCollabId } = useEditorStore();
-  const [mode, setMode] = useState<"editor" | "kb" | "collab" | "settings">(
-    "editor",
-  );
+  const [mode, setMode] = useState<
+    "editor" | "kb" | "collab" | "graph" | "settings"
+  >("editor");
   const { initialize, isInitializing, session, logout } = useAuthStore();
   const loginBackgroundRef = useRef<HTMLDivElement | null>(null);
   const canvasNestRef = useRef<
@@ -185,6 +187,22 @@ const MainApp = () => {
     toast.success("已成功退出登录");
   };
 
+  const openFileFromGraph = useCallback(async (filePath: string) => {
+    if (!filePath) return;
+    try {
+      const content = await readTextFile(filePath);
+      const { frontmatter, body } = parseMarkdown(content);
+      const resolvedContent = await resolveMarkdownImages(body, filePath);
+      useEditorStore.getState().setFrontmatter(frontmatter);
+      useEditorStore.getState().setContent(resolvedContent);
+      useEditorStore.getState().setCurPath(filePath);
+      setMode("editor");
+    } catch (err) {
+      logError("Failed to open file from graph:", err);
+      toast.error("无法打开文件");
+    }
+  }, []);
+
   const navItems = [
     {
       id: "editor",
@@ -200,6 +218,11 @@ const MainApp = () => {
       id: "collab",
       icon: Users,
       title: "协同编辑",
+    },
+    {
+      id: "graph",
+      icon: Share2,
+      title: "图谱",
     },
   ] as const;
 
@@ -283,7 +306,7 @@ const MainApp = () => {
               ) : (
                 <SidebarProvider className="w-full h-full">
                   <div className="flex w-full h-full">
-                    {mode === "editor" ? (
+                    {mode === "editor" || mode === "graph" ? (
                       <AppSidebar style={{ left: "3rem" }} mode={mode} />
                     ) : mode === "kb" ? (
                       <KbSidebar style={{ left: "3rem" }} mode={mode} />
@@ -291,7 +314,9 @@ const MainApp = () => {
                       <CollabSidebar style={{ left: "3rem" }} />
                     )}
                     <div className="content flex-1 overflow-hidden relative">
-                      {mode === "kb" ? (
+                      {mode === "graph" ? (
+                        <GraphView onOpenFile={openFileFromGraph} />
+                      ) : mode === "kb" ? (
                         <ChatPanel />
                       ) : (
                         <Editor

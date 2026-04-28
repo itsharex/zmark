@@ -24,7 +24,7 @@ import { InputDialog } from "./input-dialog";
 import { Tree } from "./tree";
 
 interface ISidebarProps extends React.ComponentProps<typeof Sidebar> {
-  mode: "editor" | "kb";
+  mode: "editor" | "kb" | "graph";
 }
 
 export function AppSidebar({ mode, ...props }: ISidebarProps) {
