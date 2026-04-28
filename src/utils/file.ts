@@ -47,6 +47,10 @@ async function resolveTargetPath(
 }
 
 function getSafeFileExtension(name: string, fallback: string) {
+  if (!name.includes(".")) {
+    return fallback;
+  }
+
   const ext = name.split(".").pop()?.trim();
   if (!ext) {
     return fallback;
@@ -63,8 +67,7 @@ function getSafeFileExtension(name: string, fallback: string) {
 function isResolvedAssetSrc(src: string) {
   return (
     src.startsWith("asset://") ||
-    src.startsWith("http://asset.localhost/") ||
-    src.startsWith("https://asset.localhost/")
+    /^https?:\/\/asset\.localhost(?::\d+)?\//i.test(src)
   );
 }
 
@@ -348,9 +351,10 @@ export async function unresolveMarkdownImages(
 ) {
   const docDir = await dirname(filePath);
   return await replaceMarkdownImages(markdown, async ({ alt, src }) => {
-    const isHttpSrc =
-      src.startsWith("http://") || src.startsWith("https://");
-    const isTauriAssetSrc = /^https?:\/\/asset\.localhost(?::\d+)?\//i.test(src);
+    const isHttpSrc = src.startsWith("http://") || src.startsWith("https://");
+    const isTauriAssetSrc = /^https?:\/\/asset\.localhost(?::\d+)?\//i.test(
+      src,
+    );
 
     if (isHttpSrc && !isTauriAssetSrc) {
       return undefined;
