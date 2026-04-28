@@ -1,3 +1,17 @@
+## [1.14.1](https://github.com/zhoumowan/zmark/compare/v1.14.0...v1.14.1) (2026-04-28)
+
+
+### Bug Fixes
+
+* handle dot-less filenames and port in asset URLs ([c61fc74](https://github.com/zhoumowan/zmark/commit/c61fc74d9a88c62bed73c6ffef5b083228bafc31))
+
+# [1.14.0](https://github.com/zhoumowan/zmark/compare/v1.13.0...v1.14.0) (2026-04-28)
+
+
+### Features
+
+* 新增知识图谱可视化组件 ([270919f](https://github.com/zhoumowan/zmark/commit/270919f3bb9efe5df59c1cb94af6379083a18290))
+
 # [1.13.0](https://github.com/zhoumowan/zmark/compare/v1.12.0...v1.13.0) (2026-04-27)
 
 
