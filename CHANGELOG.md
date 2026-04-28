@@ -1,3 +1,11 @@
+## [1.14.2](https://github.com/zhoumowan/zmark/compare/v1.14.1...v1.14.2) (2026-04-28)
+
+
+### Bug Fixes
+
+* 修复全局快捷键注册的竞态条件 ([76e75af](https://github.com/zhoumowan/zmark/commit/76e75af387984f2003fb0b4307fcc9ec93b7c046))
+* 修复窗口和文本区域溢出及高度问题 ([318de9d](https://github.com/zhoumowan/zmark/commit/318de9d03329e8c859ae2fe389e5ac738b9f02f4))
+
 ## [1.14.1](https://github.com/zhoumowan/zmark/compare/v1.14.0...v1.14.1) (2026-04-28)
 
 
