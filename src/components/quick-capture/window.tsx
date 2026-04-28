@@ -70,16 +70,16 @@ export function QuickCaptureWindow() {
   };
 
   return (
-    <div className="h-screen w-screen p-4 flex flex-col box-border">
-      <div className="flex flex-col flex-1 bg-background border border-border shadow-xl rounded-xl overflow-hidden relative">
+    <div className="h-screen w-screen flex flex-col box-border overflow-hidden">
+      <div className="flex flex-col flex-1 bg-background border border-border shadow-xl rounded-xl overflow-hidden relative min-h-0">
         <div
           data-tauri-drag-region
           className="h-6 w-full absolute top-0 left-0 bg-transparent cursor-move"
         />
-        <div className="flex flex-col p-4 flex-1 mt-2">
+        <div className="flex flex-col p-4 flex-1 mt-2 min-h-0">
           <textarea
             ref={inputRef}
-            className="w-full flex-1 resize-none bg-transparent outline-none text-lg placeholder:text-muted-foreground"
+            className="w-full flex-1 resize-none bg-transparent outline-none text-lg placeholder:text-muted-foreground min-h-0"
             placeholder="随时记录你的灵感... (Markdown 格式)"
             value={content}
             onChange={(e) => setContent(e.target.value)}
