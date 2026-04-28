@@ -22,19 +22,131 @@ import { to } from "./error-handler";
 import { logError } from "./log";
 import { addOrUpdateFile, removeFile as removeSearchIndex } from "./search";
 
+const MARKDOWNS_DIR_NAME = "markdowns";
+const MARKDOWN_IMAGE_RE = /!\[(.*?)\]\((.*?)\)/g;
+
+function shouldSkipDirEntryName(name: string | null | undefined) {
+  return !name || name.startsWith(".") || name === ".DS_Store";
+}
+
+async function resolveTargetPath(
+  nameOrPath: string,
+  basePath: string | undefined,
+  dataDir: string,
+) {
+  if (!basePath) {
+    return await join(dataDir, nameOrPath);
+  }
+
+  const baseIsDir = await isDir(basePath);
+  if (baseIsDir) {
+    return await join(basePath, nameOrPath);
+  }
+
+  return await join(await dirname(basePath), nameOrPath);
+}
+
+function getSafeFileExtension(name: string, fallback: string) {
+  if (!name.includes(".")) {
+    return fallback;
+  }
+
+  const ext = name.split(".").pop()?.trim();
+  if (!ext) {
+    return fallback;
+  }
+
+  const normalized = ext.toLowerCase();
+  if (!/^[a-z0-9]{1,16}$/.test(normalized)) {
+    return fallback;
+  }
+
+  return normalized;
+}
+
+function isResolvedAssetSrc(src: string) {
+  return (
+    src.startsWith("asset://") ||
+    /^https?:\/\/asset\.localhost(?::\d+)?\//i.test(src)
+  );
+}
+
+function normalizeAbsolutePathFromImageSrc(src: string) {
+  if (isResolvedAssetSrc(src)) {
+    try {
+      const url = new URL(src);
+      let absolutePath = decodeURIComponent(url.pathname);
+      if (
+        absolutePath.match(/^\/[a-zA-Z]:\//) ||
+        absolutePath.match(/^\/[a-zA-Z]:\\/)
+      ) {
+        absolutePath = absolutePath.substring(1);
+      }
+      return absolutePath;
+    } catch {
+      return undefined;
+    }
+  }
+
+  if (src.startsWith("/")) {
+    return src;
+  }
+
+  if (/^[a-zA-Z]:[\\/]/.test(src)) {
+    return src;
+  }
+
+  return undefined;
+}
+
+async function replaceMarkdownImages(
+  markdown: string,
+  replacer: (params: {
+    alt: string;
+    src: string;
+  }) => Promise<string | undefined>,
+) {
+  const re = new RegExp(MARKDOWN_IMAGE_RE.source, MARKDOWN_IMAGE_RE.flags);
+  const matches = Array.from(markdown.matchAll(re));
+  if (matches.length === 0) {
+    return markdown;
+  }
+
+  let result = "";
+  let lastIndex = 0;
+
+  for (const match of matches) {
+    const fullMatch = match[0] ?? "";
+    const alt = match[1] ?? "";
+    const src = match[2] ?? "";
+    const startIndex = match.index ?? 0;
+    const endIndex = startIndex + fullMatch.length;
+
+    result += markdown.slice(lastIndex, startIndex);
+
+    const replacement = await replacer({ alt, src });
+    result += replacement ?? fullMatch;
+
+    lastIndex = endIndex;
+  }
+
+  result += markdown.slice(lastIndex);
+  return result;
+}
+
 /**
  * 获取数据目录路径
  */
-export async function getDataDir() {
+export async function getDataDir(): Promise<string> {
   // 尝试创建 markdowns 目录，如果已存在则忽略错误
   await to(
-    mkdir("markdowns", {
+    mkdir(MARKDOWNS_DIR_NAME, {
       baseDir: BaseDirectory.Document,
       recursive: true,
     }),
   );
   // 无论是否创建成功，都返回完整的路径
-  return join(await documentDir(), "markdowns");
+  return join(await documentDir(), MARKDOWNS_DIR_NAME);
 }
 
 async function buildFileTree(dirPath: string): Promise<TreeItem[]> {
@@ -44,7 +156,7 @@ async function buildFileTree(dirPath: string): Promise<TreeItem[]> {
   for (const entry of entries) {
     const name = entry.name;
     // 过滤掉隐藏文件（以.开头）和无效文件
-    if (!name || name.startsWith(".") || name === ".DS_Store") {
+    if (shouldSkipDirEntryName(name)) {
       continue;
     }
     if (entry.isFile) {
@@ -58,7 +170,7 @@ async function buildFileTree(dirPath: string): Promise<TreeItem[]> {
   return fileTree;
 }
 
-export async function getFileTree() {
+export async function getFileTree(): Promise<TreeItem[]> {
   const dataDir = await getDataDir();
   return await buildFileTree(dataDir);
 }
@@ -71,7 +183,7 @@ export function getDisplayFilename(filePath: string) {
   return filePath.split(/[/\\]/).pop() || filePath;
 }
 
-export async function isDir(path: string) {
+export async function isDir(path: string): Promise<boolean> {
   const [err, fileStat] = await to(stat(path));
   if (err) {
     logError("Error checking if path is directory:", err);
@@ -81,46 +193,32 @@ export async function isDir(path: string) {
 }
 
 export async function createFile(filePath: string, basePath?: string) {
-  const dataDir = basePath || (await getDataDir());
-  let finalPath: string;
-  if (basePath) {
-    const isDirectory = await isDir(basePath);
-    if (isDirectory) {
-      finalPath = await join(basePath, filePath);
-    } else {
-      finalPath = await join(await dirname(basePath), filePath);
-    }
-  } else {
-    finalPath = await join(dataDir, filePath);
-  }
+  const dataDir = await getDataDir();
+  const finalPath = await resolveTargetPath(filePath, basePath, dataDir);
 
   if (!(await exists(finalPath))) {
     await writeFile(finalPath, new Uint8Array());
-    // Add new file to search index
     addOrUpdateFile({
       path: finalPath,
-      name: finalPath.split("/").pop() || "",
+      name: getDisplayFilename(finalPath),
       content: "",
     });
   }
 }
 
 export async function createDirectory(dirPath: string, basePath?: string) {
-  const dataDir = basePath || (await getDataDir());
-  let finalPath: string;
-  if (basePath) {
-    const isDirectory = await isDir(basePath);
-    if (isDirectory) {
-      finalPath = await join(basePath, dirPath);
-    } else {
-      finalPath = await join(await dirname(basePath), dirPath);
+  const dataDir = await getDataDir();
+  const finalPath = await resolveTargetPath(dirPath, basePath, dataDir);
+  const alreadyExists = await exists(finalPath);
+  if (alreadyExists) {
+    const existingIsDir = await isDir(finalPath);
+    if (!existingIsDir) {
+      throw new Error("Target path exists and is not a directory");
     }
-  } else {
-    finalPath = await join(dataDir, dirPath);
+    return;
   }
-  if (!(await exists(finalPath))) {
-    await mkdir(finalPath);
-  }
+
+  await mkdir(finalPath, { recursive: true });
 }
 
 export const handleImageUpload = async (
@@ -128,48 +226,34 @@ export const handleImageUpload = async (
   _onProgress?: (event: { progress: number }) => void,
   _abortSignal?: AbortSignal,
 ): Promise<string> => {
-  // 1. 获取当前编辑文件的路径
   const { curPath } = useEditorStore.getState();
 
   if (!curPath) {
     throw new Error("请先保存文档，再上传图片");
   }
 
-  // 2. 确定图片保存目录 (当前文档目录下的 assets 文件夹)
   const docDir = await dirname(curPath);
   const assetsDir = await join(docDir, "assets");
 
-  // 3. 确保目录存在
-  const assetsExists = await exists(assetsDir);
-  if (!assetsExists) {
-    await mkdir(assetsDir, { recursive: true });
-  }
+  await mkdir(assetsDir, { recursive: true });
 
-  // 4. 生成文件名
-  const ext = file.name.split(".").pop() || "png";
+  const ext = getSafeFileExtension(file.name, "png");
   const fileName = `${crypto.randomUUID()}.${ext}`;
   const filePath = await join(assetsDir, fileName);
 
-  // 5. 读取文件内容并写入
   const arrayBuffer = await file.arrayBuffer();
-  const uint8Array = new Uint8Array(arrayBuffer);
+  await writeFile(filePath, new Uint8Array(arrayBuffer));
 
-  await writeFile(filePath, uint8Array);
-
-  // 6. 返回可预览的 URL
-  // 使用 convertFileSrc 将本地路径转换为 asset:// 协议的 URL
-  const assetUrl = convertFileSrc(filePath);
-
-  return assetUrl;
+  return convertFileSrc(filePath);
 };
 
 async function readAllMarkdownFiles(dirPath: string): Promise<FileContent[]> {
   const entries = await readDir(dirPath);
-  let files: FileContent[] = [];
+  const files: FileContent[] = [];
 
   for (const entry of entries) {
     const name = entry.name;
-    if (!name || name.startsWith(".") || name === ".DS_Store") {
+    if (shouldSkipDirEntryName(name)) {
       continue;
     }
 
@@ -180,22 +264,18 @@ async function readAllMarkdownFiles(dirPath: string): Promise<FileContent[]> {
       if (err) {
         logError(`Failed to read file ${fullPath}`, err);
       } else if (content !== undefined) {
-        files.push({
-          path: fullPath,
-          name: name,
-          content: content,
-        });
+        files.push({ path: fullPath, name, content });
       }
     } else if (entry.isDirectory) {
       const subFiles = await readAllMarkdownFiles(fullPath);
-      files = [...files, ...subFiles];
+      files.push(...subFiles);
     }
   }
 
   return files;
 }
 
-export async function getAllMarkdownFiles() {
+export async function getAllMarkdownFiles(): Promise<FileContent[]> {
   const dataDir = await getDataDir();
   return await readAllMarkdownFiles(dataDir);
 }
@@ -208,44 +288,34 @@ export async function resolveMarkdownImages(
   filePath: string,
 ) {
   const docDir = await dirname(filePath);
-
-  // 使用正则表达式匹配 Markdown 中的图片语法 ! [alt](path)
-  const matches = Array.from(markdown.matchAll(/!\[(.*?)\]\((.*?)\)/g));
-  let result = markdown;
-
-  for (const match of matches) {
-    const [fullMatch, alt, src] = match;
-
-    // 如果是远程路径或已经是 asset:// 路径或 base64，跳过
+  return await replaceMarkdownImages(markdown, async ({ alt, src }) => {
     if (
-      src.startsWith("http") ||
-      src.startsWith("asset://") ||
-      src.startsWith("data:")
+      src.startsWith("http://") ||
+      src.startsWith("https://") ||
+      src.startsWith("data:") ||
+      isResolvedAssetSrc(src)
     ) {
-      continue;
+      return undefined;
     }
 
-    // 解析相对路径为绝对路径
     const [err, absolutePath] = await to(join(docDir, src));
-    if (err) {
+    if (err || !absolutePath) {
       logError(`Failed to resolve image path: ${src}`, err);
-      continue;
+      return undefined;
     }
 
-    // 检查文件是否存在
-    const [existErr, isExist] = await to(exists(absolutePath as string));
+    const [existErr, isExist] = await to(exists(absolutePath));
     if (existErr) {
       logError(`Failed to check image existence: ${src}`, existErr);
-      continue;
+      return undefined;
     }
 
-    if (isExist) {
-      const assetUrl = convertFileSrc(absolutePath as string);
-      result = result.replace(fullMatch, `![${alt}](${assetUrl})`);
+    if (!isExist) {
+      return undefined;
     }
-  }
 
-  return result;
+    return `![${alt}](${convertFileSrc(absolutePath)})`;
+  });
 }
 
 /**
@@ -280,49 +350,24 @@ export async function unresolveMarkdownImages(
   filePath: string,
 ) {
   const docDir = await dirname(filePath);
+  return await replaceMarkdownImages(markdown, async ({ alt, src }) => {
+    const isHttpSrc = src.startsWith("http://") || src.startsWith("https://");
+    const isTauriAssetSrc = /^https?:\/\/asset\.localhost(?::\d+)?\//i.test(
+      src,
+    );
 
-  const matches = Array.from(markdown.matchAll(/!\[(.*?)\]\((.*?)\)/g));
-  let result = markdown;
-
-  for (const match of matches) {
-    const [fullMatch, alt, src] = match;
-
-    let absolutePath = "";
-
-    if (src.startsWith("asset://")) {
-      const url = new URL(src);
-      // decodeURIComponent(url.pathname) 可能会包含前导斜杠
-      absolutePath = decodeURIComponent(url.pathname);
-      // 在 macOS 上，absolutePath 如果以 /Users/... 开头，则它是绝对路径
-      // 在 Windows 上，absolutePath 如果以 /C:/... 开头，需要去掉前面的 /
-      if (
-        absolutePath.match(/^\/[a-zA-Z]:\//) ||
-        absolutePath.match(/^\/[a-zA-Z]:\\/)
-      ) {
-        absolutePath = absolutePath.substring(1);
-      }
-    } else if (
-      src.startsWith("/") ||
-      (src.includes(":") && !src.startsWith("http"))
-    ) {
-      // 看起来像绝对路径
-      absolutePath = src;
-    } else {
-      // 已经是相对路径或远程路径
-      continue;
+    if (isHttpSrc && !isTauriAssetSrc) {
+      return undefined;
     }
 
-    if (absolutePath) {
-      // 计算从文档目录到图片目录的相对路径
-      const relPath = getRelativePath(docDir, absolutePath);
-      // 确保使用正斜杠
-      const webRelPath = relPath.replace(/\\/g, "/");
-
-      result = result.replace(fullMatch, `![${alt}](${webRelPath})`);
+    const absolutePath = normalizeAbsolutePathFromImageSrc(src);
+    if (!absolutePath) {
+      return undefined;
     }
-  }
 
-  return result;
+    const relPath = getRelativePath(docDir, absolutePath).replace(/\\/g, "/");
+    return `![${alt}](${relPath})`;
+  });
 }
 
 export async function deleteFileOrDir(path: string) {
