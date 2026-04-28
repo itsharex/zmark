@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./public/logo.svg" alt="ZMark Logo" width="120" height="120" />
   <h1>ZMark</h1>
-  <p>A Modern, AI-Powered Markdown Editor & Local Knowledge Base</p>
+  <p>一款现代化的智能 Markdown 编辑器与本地知识库</p>
 
   <p>
     <a href="./README.md">English</a> | <a href="./README_zh-CN.md">简体中文</a>
@@ -27,93 +27,93 @@
   </p>
 
   <p>
-    <a href="#features">Features</a> •
-    <a href="#installation">Installation</a> •
-    <a href="#development">Development</a> •
-    <a href="#tech-stack">Tech Stack</a>
+    <a href="#核心特性">核心特性</a> •
+    <a href="#安装指南">安装指南</a> •
+    <a href="#开发指南">开发指南</a> •
+    <a href="#技术栈">技术栈</a>
   </p>
 </div>
 
 <br/>
 
-ZMark is a local-first desktop application that combines a seamless Markdown editing experience with an intelligent, Retrieval-Augmented Generation (RAG) knowledge base. Built for speed and privacy, it serves as your personal second brain.
+ZMark 是一个本地优先的桌面应用程序，它将流畅的 Markdown 编辑体验与智能的检索增强生成（RAG）知识库结合在一起。专注于速度和隐私保护，它是你个人的“第二大脑”。
 
-## Features
+## 核心特性
 
-### Seamless Editing Experience
-- **WYSIWYG Markdown**: A Notion-style, block-based editor powered by Tiptap. Supports drag-and-drop block reordering.
-- **Slash Commands & Bubble Menus**: Quick content formatting using `/` commands or floating contextual menus.
-- **Interactive Frontmatter**: Beautiful, built-in property panels for effortless metadata and tag management.
-- **Rich Content Support**: Out-of-the-box support for code highlighting (lowlight), image management, text highlighting, and math equations (KaTeX).
-- **Interactive Graph View**: Visualize connections between your documents using an interactive node graph.
-- **Real-time Collaboration**: Built-in support for collaborative editing using Yjs and Hocuspocus.
+### 流畅的编辑体验
+- **所见即所得 (WYSIWYG) Markdown**: 基于 Tiptap 构建的 Notion 风格块级编辑器。支持块元素的拖放排序。
+- **斜杠命令与悬浮菜单**: 使用 `/` 命令或悬浮上下文菜单快速格式化内容。
+- **交互式 Frontmatter**: 内置美观的属性面板，轻松管理文档元数据与标签。
+- **丰富的媒体内容**: 开箱即用的代码高亮 (lowlight)、图片管理、文本高亮标注以及数学公式 (KaTeX) 支持。
+- **交互式知识图谱**: 能够以交互式的节点图谱形式直观展现你所有文档之间的双向链接。
+- **实时协同编辑**: 内置对协同编辑的支持（基于 Yjs 和 Hocuspocus）。
 
-### Intelligent Knowledge Base (RAG)
-- **Local-First Architecture**: Your data stays on your device. Powered by a high-performance SQLite local database (rusqlite).
-- **AI Integration**: Deep integration with SiliconFlow API. Uses `BAAI/bge-m3` for precise vector embeddings and `Qwen/Qwen2.5-7B-Instruct` for fluid, streaming Q&A.
-- **Transparent Retrieval**: Visualizes the RAG process, showing referenced documents and similarity scores alongside AI responses.
-- **Quick Capture**: A global floating window for capturing fleeting thoughts instantly, supported by global shortcuts.
+### 智能知识库 (RAG)
+- **本地优先架构**: 你的数据安全地保留在本地。由高性能的 SQLite 数据库驱动 (rusqlite)。
+- **AI 深度集成**: 接入 SiliconFlow API。默认使用 `BAAI/bge-m3` 进行精确的向量嵌入，并采用 `Qwen/Qwen2.5-7B-Instruct` 提供流畅的流式问答体验。
+- **透明的检索过程**: 可视化 RAG 流程，直观展示参考文档及其相似度，让 AI 回答有迹可循。
+- **全局快速闪记 (Quick Capture)**: 支持通过全局快捷键唤起悬浮窗口，随时随地记录灵感碎片。
 
-### Beautifully Crafted UI
-- **Modern Design**: Built with Tailwind CSS 4 and Shadcn UI for a sleek, responsive interface.
-- **Native Dark Mode**: First-class dark mode support that respects your system preferences.
+### 精致的 UI/UX 设计
+- **现代界面**: 采用 Tailwind CSS 4 和 Shadcn UI 构建，带来干净、响应式的现代设计。
+- **原生深色模式**: 提供原生的深色主题支持，并能够自动跟随你的系统偏好。
 
-## Installation
+## 安装指南
 
-### Download Pre-compiled Binaries
+### 下载预编译版本 (推荐)
 
-You can download the latest pre-compiled binaries for macOS, Windows, and Linux from our [Releases page](https://github.com/zhoumowan/zmark/releases). These builds are automatically generated via GitHub Actions.
+你可以前往 [Releases 页面](https://github.com/zhoumowan/zmark/releases) 下载适用于 macOS、Windows 或 Linux 的最新预编译版本。所有的安装包均由 GitHub Actions 自动构建并发布。
 
-### Build from Source
+### 源码构建
 
-If you prefer to build ZMark from source:
+如果你更倾向于从源码自行构建 ZMark：
 
-#### Prerequisites
-- [Rust](https://www.rust-lang.org/tools/install)
-- [Node.js](https://nodejs.org/) (v24 recommended as per CI)
+#### 前置环境
+- [Rust](https://www.rust-lang.org/tools/install) (用于构建 Tauri 后端)
+- [Node.js](https://nodejs.org/) (根据 CI 建议使用 v24)
 - [pnpm](https://pnpm.io/installation) (v9.0.0+)
 
-#### Steps
-1. Clone the repository:
+#### 构建步骤
+1. 克隆项目仓库：
 ```bash
 git clone https://github.com/zhoumowan/zmark.git
 cd zmark
 ```
 
-2. Install dependencies:
+2. 安装依赖：
 ```bash
 pnpm install
 ```
 
-3. Build the application:
+3. 构建应用程序：
 ```bash
 pnpm build
 ```
 
-## Development
+## 开发指南
 
-To start the development server with Hot Module Replacement (HMR) and the Tauri window:
+启动包含热模块替换 (HMR) 的开发服务器及 Tauri 窗口：
 
 ```bash
 pnpm dev
 ```
 
-### Configuration
+### 应用配置
 
-To unlock full capabilities after launching the app:
-1. Navigate to **Settings**.
-2. Enter your **SiliconFlow API Key** for AI features.
-3. Configure **Supabase Auth** credentials if you want to use cloud synchronization and GitHub login features.
+启动应用后，按照以下步骤解锁完整功能：
+1. 前往 **Settings** (设置)。
+2. 输入你的 **SiliconFlow API Key** 以激活本地 AI 知识库功能。
+3. (可选) 配置你的 **Supabase Auth** 凭证以开启 GitHub 登录及云同步特性。
 
-## Tech Stack
+## 技术栈
 
-- **Frontend**: React 19, Vite, Tailwind CSS 4, Shadcn UI
-- **Editor Engine**: Tiptap, ProseMirror, Yjs
-- **State Management**: Zustand
-- **Desktop/Backend**: Tauri 2, Rust, SQLite (rusqlite)
-- **AI & Auth**: SiliconFlow API, Supabase
-- **CI/CD**: GitHub Actions, Semantic Release
+- **前端**: React 19, Vite, Tailwind CSS 4, Shadcn UI
+- **编辑器引擎**: Tiptap, ProseMirror, Yjs
+- **状态管理**: Zustand
+- **桌面/后端**: Tauri 2, Rust, SQLite (rusqlite)
+- **AI 与鉴权**: SiliconFlow API, Supabase
+- **持续集成 (CI/CD)**: GitHub Actions, Semantic Release
 
-## License
+## 许可证
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+本项目基于 MIT 许可证开源 - 详细信息请参阅 [LICENSE](./LICENSE) 文件。

@@ -10,7 +10,7 @@
 
 ## 2. 知识库与双向链接 (KB Enhancements)
 - [x] **双向链接 (Bi-directional Links)**：支持 `@` 语法，自动关联其他文档。
-- [ ] **知识图谱 (Graph View)**：基于双向链接的数据，使用 D3.js 或 ECharts 渲染文档间的关系网状图。
+- [x] **知识图谱 (Graph View)**：基于双向链接的数据，使用 D3.js 或 ECharts 渲染文档间的关系网状图。
 - [x] **Frontmatter / 属性面板**：为每篇文档添加元数据（标签、状态、创建时间、自定义字段），方便在侧边栏或全局进行过滤。
 - [ ] **多工作区 (Workspaces)**：支持本地文件夹作为工作区，或 Supabase 云端多团队切换。
 
