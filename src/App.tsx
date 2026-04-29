@@ -388,6 +388,9 @@ const App = () => {
     // 确保 html 和 body 完全透明，消除可能由于渲染延迟导致的白边或框
     document.documentElement.style.backgroundColor = "transparent";
     document.body.style.backgroundColor = "transparent";
+    // 灵感窗口固定宽高，禁止滚动
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
 
     return (
       <ThemeProvider>
