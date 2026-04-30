@@ -1,3 +1,10 @@
+## [1.14.3](https://github.com/zhoumowan/zmark/compare/v1.14.2...v1.14.3) (2026-04-30)
+
+
+### Bug Fixes
+
+* 修复灵感窗口滚动问题，强制隐藏滚动条 ([4b6d541](https://github.com/zhoumowan/zmark/commit/4b6d54159c8a70b8354de2462d894673ed25171b))
+
 ## [1.14.2](https://github.com/zhoumowan/zmark/compare/v1.14.1...v1.14.2) (2026-04-28)
 
 
